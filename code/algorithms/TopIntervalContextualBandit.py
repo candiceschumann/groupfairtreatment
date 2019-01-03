@@ -1,8 +1,11 @@
 import numpy as np
 from scipy.stats import norm
 import math
+import collections
 
-class AbstractContextualBandit:
+Bound = collections.namedtuple('Bound', ['lower','upper'])
+
+class TopIntervalContextualBandit:
 
 	def __init__(self, num_arms, delta, T, context_size):
 		self.num_arms = num_arms
@@ -75,6 +78,8 @@ class AbstractContextualBandit:
 			tmp = np.dot(context, tmp)
 			return np.dot(tmp, context.T)
 
+	'''Using the given delta and a quantile function distribution find
+	the confidence interval of a given arm.'''
 	def arm_confidence(self, arm, context):
 		if self.X[arm] is None:
 			return float('inf')
@@ -83,33 +88,57 @@ class AbstractContextualBandit:
 			intv = self.delta / (2 * self.num_arms * self.T)
 			return abs(norm.ppf(intv,0,sigma))
 
+	'''Return the lower and upper bounds for all arms'''
+	def lower_uppers(self,X):
+		l_u = [None for _ in range(self.num_arms)]
+		for arm in range(self.num_arms):
+			l_u[arm] = self.lower_upper(arm,X[arm])
+		return l_u
+
+	'''Returns the lower and upper confidence range of a given arm'''
 	def lower_upper(self, arm, context):
 		Y = self.estimate_reward(arm, context)
 		w = self.arm_confidence(arm, context)
 		if math.isinf(w):
-			return [float('-inf'), float('inf')]
+			return Bound(float('-inf'), float('inf'))
 		else:
-			return [Y-w,Y+w]
+			return Bound(Y-w,Y+w)
 
+	'''Return the set of arms that are chained to the given arm'''
+	def chained(self,arm,context):
+		l_u = self.lower_uppers(context)
+		chained = set([arm])
+		curr_low = l_u[arm].lower
+		curr_up = l_u[arm].upper
+		for _ in range(2):
+			for i in range(self.num_arms):
+				# Is the lower bound in the current bound?
+				if (l_u[i].lower >= curr_low) and (l_u[i].lower <= curr_up):
+					if(l_u[i].upper > curr_up):
+						curr_up = l_u[i].upper
+					chained.add(i)
+				# Is the upper bound in the current bound?
+				elif (l_u[i].upper >= curr_low) and (l_u[i].upper <= curr_up):
+					if l_u[i].lower < curr_low:
+						curr_low = l_u[i].upper
+					chained.add(i)
+				# Does the new bound surround the current bound?
+				elif (l_u[i].upper >= curr_up) and (l_u[i].lower <= curr_low):
+					curr_low = l_u[i].lower
+					curr_up = l_u[i].upper
+					chained.add(i)
+		return chained
 
-num_arms = 3
-delta = 0.5
-T = 10
-context_size = 4
-
-betas = [np.array([[1,0,0,0]]).T, np.array([[0,1,0,0]]).T, np.array([[0,0,0.5,0.5]]).T]
-
-bandit = AbstractContextualBandit(num_arms, delta, T, context_size)
-print(bandit)
-for t in range(20):
-	context = [np.random.rand(context_size) for i in range(num_arms)]
-	print(bandit.estimate_rewards(context))
-	print(bandit.arm_sigma(0,context[0]))
-	print(bandit.arm_confidence(0,context[0]))
-	print(bandit.lower_upper(0,context[0]))
-	bandit.update_reward(0, context[0], np.dot(betas[0].T, context[0])[0])
-	bandit.update_beta(0)
-	print(bandit)
-
+	'''Return an arm given the context and timestep.'''
+	def pick_arm(self,context,t):
+		if np.random.random() < self.eta(t):
+			return np.random.randint(0,self.num_arms)
+		else:
+			l_u = self.lower_uppers(context)
+			arm = 0
+			for i in range(1,self.num_arms):
+				if l_u[i].upper > l_u[arm].upper:
+					arm = i
+			return arm
 
 
