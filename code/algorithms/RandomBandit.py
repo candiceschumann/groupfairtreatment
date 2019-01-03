@@ -1,6 +1,6 @@
-from AbstractContextualBandit import *
+from TopIntervalContextualBandit import *
 
-class RandomBandit(AbstractContextualBandit):
+class RandomBandit(TopIntervalContextualBandit):
 
 	def eta(t):
 		return 1
