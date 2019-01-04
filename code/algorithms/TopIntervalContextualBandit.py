@@ -7,7 +7,7 @@ Bound = collections.namedtuple('Bound', ['lower','upper'])
 
 class TopIntervalContextualBandit:
 
-	def __init__(self, num_arms, delta, T, context_size):
+	def __init__(self, num_arms, context_size, delta, T):
 		self.num_arms = num_arms
 		self.delta = delta
 		self.T = T
@@ -28,6 +28,9 @@ class TopIntervalContextualBandit:
 		s += str(self.beta)
 		s += '\n'
 		return s
+
+	def get_T(self):
+		return self.T
 
 	'''Probability of exploration at timestep t'''
 	def eta(self, t):
@@ -99,7 +102,7 @@ class TopIntervalContextualBandit:
 	def lower_upper(self, arm, context):
 		Y = self.estimate_reward(arm, context)
 		w = self.arm_confidence(arm, context)
-		if math.isinf(w):
+		if math.isinf(w) or Y is None:
 			return Bound(float('-inf'), float('inf'))
 		else:
 			return Bound(Y-w,Y+w)

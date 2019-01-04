@@ -4,8 +4,8 @@ import numpy as np
 class GeneralContextualArm:
 
 	'''Initialize the arm with a true beta and no pulls or context.'''
-	def __init__(self,beta):
-		self.beta = beta
+	def __init__(self,beta,context_size):
+		self.beta = np.reshape(beta,(context_size,1))
 		self.pulls = 0
 		self.context = None
 
