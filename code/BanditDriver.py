@@ -56,9 +56,3 @@ class BanditDriver:
 		for i in range(len(self.rewards)):
 			regret.append(self.opt_rewards[i]-self.rewards[i])
 		return regret
-
-
-arms = [GeneralContextualArm([1,0,0,0],4), GeneralContextualArm([0,1,0,0],4), GeneralContextualArm([0,0,0.5,0.5],4)]
-bandit = TopIntervalContextualBandit(len(arms), 4, 0.3, 5000)
-driver = BanditDriver(arms,bandit)
-driver.complete_run()
