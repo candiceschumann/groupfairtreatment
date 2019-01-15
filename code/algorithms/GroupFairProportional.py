@@ -28,8 +28,3 @@ class GroupFairProportionalBandit(TopIntervalContextualBandit):
 				if l_u[i].upper > l_u[arm].upper:
 					arm = i
 			return arm
-
-groups = {'Female': [1], 'Male': [0,2]}
-bandit = GroupFairProportionalBandit(3,4,0.5,10,groups)
-context = [np.random.random(4) for _ in range(3)]
-print(bandit.pick_arm(context,100))
