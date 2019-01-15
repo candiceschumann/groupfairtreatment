@@ -2,10 +2,6 @@ from GroupFairParity import *
 
 class GroupFairParityIntervalBandit(GroupFairParityBandit):
 
-	def __init__(self, num_arms, context_size, delta, T, groups):
-		super().__init__(num_arms, context_size, delta, T,groups)
-		self.groups_list = list(groups.keys())
-
 	'''Return the set of arms that are chained to the given arm in the group'''
 	def chained(self,arm,context,group):
 		l_u = self.lower_uppers(context)
