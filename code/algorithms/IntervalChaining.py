@@ -41,5 +41,3 @@ class IntervalChainingBandit(TopIntervalContextualBandit):
 			return np.random.choice(arms)
 
 
-bandit = IntervalChainingBandit(3,0.5,10,4)
-
