@@ -1,8 +1,8 @@
-from TopIntervalContextualBandit import *
+from algorithms.TopIntervalContextualBandit import *
 
 class RandomBandit(TopIntervalContextualBandit):
 
-	def eta(t):
+	def eta(self,t):
 		return 1
 
 	

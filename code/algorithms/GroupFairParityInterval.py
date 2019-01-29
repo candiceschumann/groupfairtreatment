@@ -1,4 +1,4 @@
-from GroupFairParity import *
+from algorithms.GroupFairParity import *
 
 class GroupFairParityIntervalBandit(GroupFairParityBandit):
 
@@ -31,7 +31,6 @@ class GroupFairParityIntervalBandit(GroupFairParityBandit):
 	def pick_arm(self,context,t):
 		# Randomly pick a group
 		group = self.groups_list[np.random.randint(len(self.groups))]
-		print(group)
 		if np.random.random() < self.eta(t):
 			# Uniformly picking at random maintains individual fairness
 			return np.random.choice(self.groups[group])
@@ -39,8 +38,8 @@ class GroupFairParityIntervalBandit(GroupFairParityBandit):
 			l_u = self.lower_uppers(context)
 			# In the group choose the arm with the 
 			# highest upper confidence.
-			arm = groups[group][0]
-			for i in groups[group]:
+			arm = self.groups[group][0]
+			for i in self.groups[group]:
 				if l_u[i].upper > l_u[arm].upper:
 					arm = i
 			# Find the arms that are chained in that group

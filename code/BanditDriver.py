@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from algorithms.TopIntervalContextualBandit import TopIntervalContextualBandit
-from ContextualArm import GeneralContextualArm
-
 class BanditDriver:
 
 	def __init__(self,arms,bandit):
@@ -37,7 +34,6 @@ class BanditDriver:
 
 	def complete_run(self):
 		self.run_for_t_times(self.bandit.get_T() - self.t)
-
 
 	def get_received_rewards(self):
 		return self.rewards

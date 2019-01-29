@@ -1,6 +1,6 @@
-from GroupFairParity import *
+from algorithms.GroupFairParityInterval import *
 
-class GroupFairParityIntervalBandit(GroupFairParityBandit):
+class GroupFairProportionalIntervalBandit(GroupFairParityIntervalBandit):
 
 	'''Return an arm given the context and timestep.'''
 	def pick_arm(self,context,t):
@@ -12,15 +12,15 @@ class GroupFairParityIntervalBandit(GroupFairParityBandit):
 			# Pick a group according to proportions
 			rnd = np.random.random()
 			tot = 0
-			for gp in groups:
-				tot += len(groups[gp])
+			for gp in self.groups:
+				tot += len(self.groups[gp])
 				if rnd < (tot * 1.0) / self.num_arms:
 					group = gp
 					break
 			# In that group choose the arm with the 
 			# highest upper confidence.
-			arm = groups[group][0]
-			for i in groups[group]:
+			arm = self.groups[group][0]
+			for i in self.groups[group]:
 				if l_u[i].upper > l_u[arm].upper:
 					arm = i
 			# Find the arms that are chained in that group

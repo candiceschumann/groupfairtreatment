@@ -1,4 +1,4 @@
-from TopIntervalContextualBandit import *
+from algorithms.TopIntervalContextualBandit import *
 
 class IntervalChainingBandit(TopIntervalContextualBandit):
 
