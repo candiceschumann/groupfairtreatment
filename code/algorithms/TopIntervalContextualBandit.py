@@ -50,7 +50,7 @@ class TopIntervalContextualBandit:
 		if self.X[arm] is not None:
 			# (X'X)^-1
 			tmp1 = np.dot(self.X[arm].T,self.X[arm])
-			tmp1 = np.linalg.inv(tmp1)
+			tmp1 = np.linalg.pinv(tmp1)
 			# X'Y
 			tmp2 = np.dot(self.X[arm].T, self.Y[arm])
 			#(X'X)^-1X'Y
