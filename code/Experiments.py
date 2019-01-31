@@ -115,11 +115,6 @@ class Experiment:
 				pickle.dump(self.__dict__,f)
 
 
-
-
-
-
-
-experiment = Experiment(3,2,{"Male": [0,1], "Female": [2]},["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"],[0.5,0.6])
-experiment.run_x_experiments(2)
+# experiment = Experiment(3,2,{"Male": [0,1], "Female": [2]},["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"],[0.5,0.6])
+# experiment.run_x_experiments(2)
 
