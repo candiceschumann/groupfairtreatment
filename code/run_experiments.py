@@ -8,7 +8,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 # binary group different percentages
-if args.exp == "GenderRatiosGuassian":
+if args.exp == "GenderRatiosUniform":
 	arms = 100
 	runs = 100
 	context = 2
@@ -21,5 +21,5 @@ if args.exp == "GenderRatiosGuassian":
 		filename = "../experiments/%s/%s" % (args.exp,ratio)
 		if not os.path.exists(os.path.dirname(filename)):
 			os.makedirs(os.path.dirname(filename))
-		experiment = Experiment(arms, context, groups, algorithms, deltas, Ts, "guassian", filename=filename)
+		experiment = Experiment(arms, context, groups, algorithms, deltas, Ts, "uniform", filename=filename)
 		experiment.run_x_experiments(runs)
