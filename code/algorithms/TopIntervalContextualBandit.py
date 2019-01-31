@@ -77,7 +77,7 @@ class TopIntervalContextualBandit:
 			return None
 		else:
 			tmp = np.dot(self.X[arm].T, self.X[arm])
-			tmp = np.linalg.inv(tmp)
+			tmp = np.linalg.pinv(tmp)
 			tmp = np.dot(context, tmp)
 			return np.dot(tmp, context.T)
 
