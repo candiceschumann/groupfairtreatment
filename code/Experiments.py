@@ -107,7 +107,7 @@ class Experiment:
 		self.experiment_results = []
 		for i in range(x):
 			if seeds is None:
-				seed = i
+				seed = None
 			else:
 				seed = seeds[i]
 			self.experiment_results.append(self.run_experiment(seed))

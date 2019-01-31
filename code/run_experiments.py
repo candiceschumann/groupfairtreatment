@@ -2,7 +2,6 @@ from Experiments import Experiment
 import os
 import argparse
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Runs Group Fair MAB experiments')
     parser.add_argument('exp', help="Experiment name")
@@ -15,7 +14,7 @@ if args.exp == "GenderRatiosGuassian":
 	context = 2
 	ratios = [1,5,10,25,50]
 	deltas = [0.5,0.4,0.3,0.2,0.1]
-	Ts = [50,100,250,500,750,1000,1500,2000,5000,10000]
+	Ts = [10,20,30,40,50,60,70,80,90,100,250,500,750,1000,1500,2000,5000,10000]
 	algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"]
 	for ratio in ratios:
 		groups = {"g1": [i for i in range(0,ratio)], "g2": [i for i in range(ratio,arms)]}
