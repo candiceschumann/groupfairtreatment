@@ -5,12 +5,13 @@ import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Runs Group Fair MAB experiments')
     parser.add_argument('exp', help="Experiment name")
+    parser.add_argument('run_name', help="Run name (like number)")
     args = parser.parse_args()
 
 # binary group different percentages
 if args.exp == "GenderRatiosUniform":
 	arms = 100
-	runs = 100
+	runs = 1
 	context = 2
 	ratios = [1,5,10,25,50]
 	deltas = [0.5,0.4,0.3,0.2,0.1]
@@ -18,7 +19,7 @@ if args.exp == "GenderRatiosUniform":
 	algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"]
 	for ratio in ratios:
 		groups = {"g1": [i for i in range(0,ratio)], "g2": [i for i in range(ratio,arms)]}
-		filename = "../experiments/%s/%s" % (args.exp,ratio)
+		filename = "../experiments/%s/%s_%s" % (args.exp,ratio,args.run_name)
 		if not os.path.exists(os.path.dirname(filename)):
 			os.makedirs(os.path.dirname(filename))
 		experiment = Experiment(arms, context, groups, algorithms, deltas, Ts, "uniform", filename=filename)
@@ -33,7 +34,7 @@ elif args.exp == "GenderRatiosUniformSmaller":
 	algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"]
 	for ratio in ratios:
 		groups = {"g1": [i for i in range(0,ratio)], "g2": [i for i in range(ratio,arms)]}
-		filename = "../experiments/%s/%s" % (args.exp,ratio)
+		filename = "../experiments/%s/%s_%s" % (args.exp,ratio,args.run_name)
 		if not os.path.exists(os.path.dirname(filename)):
 			os.makedirs(os.path.dirname(filename))
 		experiment = Experiment(arms, context, groups, algorithms, deltas, Ts, "uniform", filename=filename)
