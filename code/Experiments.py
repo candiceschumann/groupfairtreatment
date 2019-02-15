@@ -16,7 +16,7 @@ Results = collections.namedtuple('Results', ['seed','rewards','opt_rewards','pul
 
 class Experiment:
 
-	def __init__(self,num_arms,context_size,groups,bandit_types=["TopInterval"],deltas=[0.5],Ts=[100],arm_type="guassian",betas=None,filename="../experiments/experiments.pkl"):
+	def __init__(self,num_arms,context_size,groups,bandit_types=["TopInterval"],deltas=[0.5],Ts=[100],arm_type="guassian",betas=None,filename="../experiments/experiments.pkl",cs=None):
 		self.num_arms = num_arms
 		self.context_size = context_size
 		self.groups = groups
@@ -26,17 +26,27 @@ class Experiment:
 		self.Ts = Ts
 		self.arm_type = arm_type
 		self.betas = betas
+		# cs is a dictionary from groups -> tuple (a, b), bounds of uniform distribution of beta for group
+		self.cs = cs
 		self.create_bandits()
 
 	def create_arms(self):
 		if self.arm_type == "guassian":
 			self.arms = [GeneralContextualArm(np.random.randn(self.context_size),self.context_size) for _ in range(self.num_arms)]
 		elif self.arm_type == "uniform":
-			self.arms = [GeneralContextualArm(np.random.rand(self.context_size),self.context_size) for _ in range(self.num_arms)]
+			if self.cs:
+				self.arms = [None for _ in range(self.num_arms)]
+				for group, idxs in self.groups:
+					for idx in idxs:
+						# using (b-a)*Uniform(0,1) + a to get Uniform(a,b)
+						beta = (self.cs[group][1]-self.cs[group][0])*np.random.rand(self.context_size)+self.cs[group][0]
+						self.arms[idx] = GeneralContextualArm(beta,self.context_size)
+			else:
+				self.arms = [GeneralContextualArm(np.random.rand(self.context_size),self.context_size) for _ in range(self.num_arms)]
 		elif self.arm_type == "specific":
 			self.arms = [GeneralContextualArm(self.betas[i],self.context_size) for i in range(self.num_arms)]
 		else:
-			raise ValueError("Cannot innitialize arms with type " + self.arm_type)
+			raise ValueError("Cannot initialize arms with type " + self.arm_type)
 
 	def create_bandits(self):
 		self.experiments = [ExperimentTuple(tp,delta,T) 
@@ -105,14 +115,16 @@ class Experiment:
 
 	def run_x_experiments(self,x,save=True,seeds=None):
 		self.experiment_results = []
+		assert (seeds is None) or (len(seeds) == x)
 		for i in range(x):
 			if seeds is None:
 				seed = None
 			else:
 				seed = seeds[i]
 			self.experiment_results.append(self.run_experiment(seed))
-			with open(self.filename, 'wb') as f:
-				pickle.dump(self.__dict__,f)
+			if save:
+				with open(self.filename, 'wb') as f:
+					pickle.dump(self.__dict__,f)
 
 
 # experiment = Experiment(3,2,{"Male": [0,1], "Female": [2]},["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"],[0.5,0.6])
