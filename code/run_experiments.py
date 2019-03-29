@@ -40,3 +40,22 @@ elif args.exp == "GenderRatiosUniformSmaller":
 				os.makedirs(os.path.dirname(filename))
 			experiment = Experiment(arms, context, groups, algorithms, deltas, Ts, "uniform", filename=filename)
 			experiment.run_x_experiments(runs)
+elif args.exp == "VaryContextSize":
+	arms = 10
+	deltas = [.1, .2, .3, .4, .5]
+	cs = [1, 2, 5, 10]
+	runs = 20
+	ratios = list(range(2, 6))
+	Ts = [2*n*arms for n in range(1, 21)]
+	algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"]
+
+	context_sizes = [2, 3, 4, 5]
+	for context_size in context_sizes:
+		for ratio in ratios:
+			groups = {"g1": [i for i in range(0, ratio)], "g2": [i for i in range(ratio, arms)]}
+			for c in cs:
+				hardness = {"g1": (0, c), "g2": (0, c)}
+				filename = "../experiments/%s/ratio_%s_context_%s_c_%s_%s" % (args.exp,ratio,context_size,c,args.run_name)
+				if not os.path.exists(os.path.dirname(filename)):
+					os.makedirs(os.path.dirname(filename))
+				experiment = Experiment(arms, context_size, groups, algorithms, deltas, Ts, "uniform", filename=filename, cs=hardness)
