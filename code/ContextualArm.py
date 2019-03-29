@@ -9,7 +9,7 @@ class GeneralContextualArm:
 		self.pulls = 0
 		self.context = None
 
-	'''Print out this arm in a more redable format'''
+	'''Print out this arm in a more readable format'''
 	def __str__(self):
 		s = "Beta:\n"
 		s += str(self.beta)
