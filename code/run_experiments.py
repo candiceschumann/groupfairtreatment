@@ -84,7 +84,7 @@ elif args.exp == 'VaryNumGroups':
 		groups = {"g{}".format(i+1): group_indices[i] for i in range(num_groups)}
 		for c in cs:
 			hardness = {"g{}".format(i+1): (0, c) for i in range(num_groups)}
-			filename = "../experiments/%s/_context_%s_numgrp_%s_c_%s_%s" % (args.exp,context_size,num_groups,args.run_name)
+			filename = "../experiments/%s/context_%s_numgrp_%s_c_%s_%s" % (args.exp,context_size,num_groups,c,args.run_name)
 			if not os.path.exists(os.path.dirname(filename)):
 				os.makedirs(os.path.dirname(filename))
 			experiment = Experiment(arms, context_size, groups, algorithms, deltas, Ts, "uniform", filename=filename, cs=hardness)
