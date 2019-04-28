@@ -28,8 +28,7 @@ class BanditDriver:
 			reward = self.arms[arm].pull_arm()
 			self.rewards.append(reward)
 			# Update the bandit
-			self.bandit.update_reward(arm, contexts[arm], reward)
-			self.bandit.update_beta(arm)
+			self.bandit.update(arm, contexts[arm], reward)
 
 
 	def complete_run(self):

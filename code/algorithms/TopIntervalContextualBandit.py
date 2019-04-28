@@ -56,6 +56,11 @@ class TopIntervalContextualBandit:
 			#(X'X)^-1X'Y
 			self.beta[arm] = np.dot(tmp1,tmp2)
 
+	'''Update the context, received reward, and weights on each context for a given arm'''
+	def update(self, arm, context, Y):
+		self.update_reward(arm, context, Y)
+		self.update_beta(arm)
+
 	'''Find the score for each arm given the empirical beta's calculated 
 	and the given context (x) for each arm.'''
 	def estimate_rewards(self, X):
