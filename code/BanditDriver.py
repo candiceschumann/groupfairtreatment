@@ -9,8 +9,10 @@ class BanditDriver:
 		self.t = 0
 		self.rewards  = []
 		self.opt_rewards = []
+		self.opt_real_rewards = []
 		self.which_arms = []
 		self.opt_arms = []
+		self.opt_real_arms = []
 
 	def run_for_t_times(self,t):
 		if self.t + t > self.bandit.get_T():
@@ -20,8 +22,11 @@ class BanditDriver:
 			# Get new context for this round from all of the arms.
 			contexts = [self.arms[arm].get_new_context() for arm in range(len(self.arms))]
 			true_rewards = [self.arms[arm].get_reward(contexts[arm]) for arm in range(len(self.arms))]
+			unbiased_rewards = [self.arms[arm].get_real_reward() for arm in range(len(self.arms))]
 			self.opt_arms.append(np.argmax(true_rewards))
+			self.opt_real_arms.append(np.argmax(unbiased_rewards))
 			self.opt_rewards.append(true_rewards[self.opt_arms[-1]])
+			self.opt_real_rewards.append()
 			# Pick an arm to pull and pull it
 			arm = self.bandit.pick_arm(contexts, self.t)
 			self.which_arms.append(arm)

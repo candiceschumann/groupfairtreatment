@@ -6,6 +6,7 @@ from algorithms.GroupFairParity import GroupFairParityBandit
 from algorithms.GroupFairParityInterval import GroupFairParityIntervalBandit
 from algorithms.GroupFairProportional import GroupFairProportionalBandit
 from algorithms.GroupFairProportionalInterval import GroupFairProportionalIntervalBandit
+from algorithms.GroupFairTopInterval import GroupFairTopInterval
 from ContextualArm import GeneralContextualArm
 from BanditDriver import BanditDriver
 import collections
@@ -16,7 +17,7 @@ Results = collections.namedtuple('Results', ['seed','rewards','opt_rewards','pul
 
 class Experiment:
 
-	def __init__(self,num_arms,context_size,groups,bandit_types=["TopInterval"],deltas=[0.5],Ts=[100],arm_type="guassian",betas=None,filename="../experiments/experiments.pkl",cs=None):
+	def __init__(self,num_arms,context_size,groups,bandit_types=["TopInterval"],deltas=[0.5],Ts=[100],arm_type="guassian",betas=None,filename="../experiments/experiments.pkl",cs=None,sensitive_group=None):
 		self.num_arms = num_arms
 		self.context_size = context_size
 		self.groups = groups
@@ -28,6 +29,7 @@ class Experiment:
 		self.betas = betas
 		# cs is a dictionary from groups -> tuple (a, b), bounds of uniform distribution of beta for group
 		self.cs = cs
+		self.sensitive_group = sensitive_group
 		self.create_bandits()
 
 	def create_arms(self):
@@ -83,6 +85,15 @@ class Experiment:
 				self.bandits.append(GroupFairProportionalIntervalBandit(
 					self.num_arms, self.context_size, 
 					experiment.delta, experiment.T, self.groups))
+			elif experiment.bandit == "GroupFairTopInterval":
+				assert(self.sensitive_group is not None)
+				arm_to_group = {}
+				for group in self.groups:
+					for arm in self.groups[group]:
+						arm_to_group[arm] = group
+				self.bandits.append(GroupFairTopInterval(self.num_arms, 
+					self.context_size, experiment.delta, experiment.T, 
+					self.groups, arm_to_group, self.sensitive_group))
 			else:
 				raise ValueError("No Bandit type of " + experiment.bandit)
 
