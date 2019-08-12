@@ -8,6 +8,7 @@ from algorithms.GroupFairProportional import GroupFairProportionalBandit
 from algorithms.GroupFairProportionalInterval import GroupFairProportionalIntervalBandit
 from algorithms.GroupFairTopInterval import GroupFairTopInterval
 from ContextualArm import GeneralContextualArm
+from ErrorContextualArm import ErrorContextualArm
 from BanditDriver import BanditDriver
 import collections
 import pickle
@@ -17,7 +18,7 @@ Results = collections.namedtuple('Results', ['seed','rewards','opt_rewards','pul
 
 class Experiment:
 
-	def __init__(self,num_arms,context_size,groups,bandit_types=["TopInterval"],deltas=[0.5],Ts=[100],arm_type="guassian",betas=None,filename="../experiments/experiments.pkl",cs=None,sensitive_group=None):
+	def __init__(self,num_arms,context_size,groups,bandit_types=["TopInterval"],deltas=[0.5],Ts=[100],arm_type="guassian",betas=None,filename="../experiments/experiments.pkl",cs=None,sensitive_group=None,group_mean=None, group_std=None):
 		self.num_arms = num_arms
 		self.context_size = context_size
 		self.groups = groups
@@ -30,21 +31,36 @@ class Experiment:
 		# cs is a dictionary from groups -> tuple (a, b), bounds of uniform distribution of beta for group
 		self.cs = cs
 		self.sensitive_group = sensitive_group
+		self.arm_to_group = {}
+		for group in self.groups:
+			for arm in self.groups[group]:
+				self.arm_to_group[arm] = group
+		self.group_mean = group_mean
+		self.group_std = group_std
 		self.create_bandits()
 
 	def create_arms(self):
-		if self.arm_type == "guassian":
-			self.arms = [GeneralContextualArm(np.random.randn(self.context_size),self.context_size) for _ in range(self.num_arms)]
-		elif self.arm_type == "uniform":
+		# if self.arm_type == "guassian":
+		# 	self.arms = [GeneralContextualArm(np.random.randn(self.context_size),self.context_size) for _ in range(self.num_arms)]
+		if self.arm_type == "uniform":
 			if self.cs:
 				self.arms = [None for _ in range(self.num_arms)]
 				for group, idxs in self.groups.items():
 					for idx in idxs:
 						# using (b-a)*Uniform(0,1) + a to get Uniform(a,b)
 						beta = (self.cs[group][1]-self.cs[group][0])*np.random.rand(self.context_size)+self.cs[group][0]
-						self.arms[idx] = GeneralContextualArm(beta,self.context_size)
+						if group_mean is None:
+							self.arms[idx] = GeneralContextualArm(beta,self.context_size)
+						else:
+							if self.sensitive_group[self.arm_to_group[idx]]:
+								self.arms[idx] = ErrorContextualArm(beta, self.context_size, self.group_mean, self.group_std)
+							else:
+								self.arms[idx] = GeneralContextualArm(beta,self.context_size)
 			else:
-				self.arms = [GeneralContextualArm(np.random.rand(self.context_size),self.context_size) for _ in range(self.num_arms)]
+				if group_mean is None:
+					self.arms = [GeneralContextualArm(np.random.rand(self.context_size),self.context_size) for _ in range(self.num_arms)]
+				else:
+					raise ValueError("I am lazy - use the C's")
 		elif self.arm_type == "specific":
 			self.arms = [GeneralContextualArm(self.betas[i],self.context_size) for i in range(self.num_arms)]
 		else:
@@ -87,13 +103,9 @@ class Experiment:
 					experiment.delta, experiment.T, self.groups))
 			elif experiment.bandit == "GroupFairTopInterval":
 				assert(self.sensitive_group is not None)
-				arm_to_group = {}
-				for group in self.groups:
-					for arm in self.groups[group]:
-						arm_to_group[arm] = group
 				self.bandits.append(GroupFairTopInterval(self.num_arms, 
 					self.context_size, experiment.delta, experiment.T, 
-					self.groups, arm_to_group, self.sensitive_group))
+					self.groups, self.arm_to_group, self.sensitive_group))
 			else:
 				raise ValueError("No Bandit type of " + experiment.bandit)
 
