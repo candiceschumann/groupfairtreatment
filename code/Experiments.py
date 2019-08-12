@@ -9,6 +9,7 @@ from algorithms.GroupFairProportionalInterval import GroupFairProportionalInterv
 from algorithms.GroupFairTopInterval import GroupFairTopInterval
 from ContextualArm import GeneralContextualArm
 from ErrorContextualArm import ErrorContextualArm
+from RealContextualArm import RealDataContextualArm
 from BanditDriver import BanditDriver
 import collections
 import pickle
@@ -18,7 +19,12 @@ Results = collections.namedtuple('Results', ['seed','rewards','opt_rewards','pul
 
 class Experiment:
 
-	def __init__(self,num_arms,context_size,groups,bandit_types=["TopInterval"],deltas=[0.5],Ts=[100],arm_type="guassian",betas=None,filename="../experiments/experiments.pkl",cs=None,sensitive_group=None,group_mean=None, group_std=None):
+	def __init__(self,num_arms,context_size,groups,
+		bandit_types=["TopInterval"],deltas=[0.5],
+		Ts=[100],arm_type="guassian",betas=None,
+		filename="../experiments/experiments.pkl",
+		cs=None,sensitive_group=None,group_mean=None, 
+		group_std=None, context_matrix=None, reward_matrix=None):
 		self.num_arms = num_arms
 		self.context_size = context_size
 		self.groups = groups
@@ -37,12 +43,21 @@ class Experiment:
 				self.arm_to_group[arm] = group
 		self.group_mean = group_mean
 		self.group_std = group_std
+		self.context_matrix = context_matrix
+		self.reward_matrix = reward_matrix
 		self.create_bandits()
 
 	def create_arms(self):
 		# if self.arm_type == "guassian":
 		# 	self.arms = [GeneralContextualArm(np.random.randn(self.context_size),self.context_size) for _ in range(self.num_arms)]
-		if self.arm_type == "uniform":
+		if self.arm_type == "real":
+			if self.context_matrix is None or self.reward_matrix is None:
+				raise ValueError("real matrices need to be populated")
+			for group, idx in self.groups.items():
+				self.arms = [None for _ in range(self.num_arms)]
+				for idx in idxs:
+					self.arms[idx] = RealDataContextualArm(self.context_matrix[idx], self.reward_matrix[idx])
+		elif self.arm_type == "uniform":
 			if self.cs:
 				self.arms = [None for _ in range(self.num_arms)]
 				for group, idxs in self.groups.items():

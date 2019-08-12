@@ -1,12 +1,12 @@
 from ContextualArm import GeneralContextualArm
 import numpy as np
 
-class ReadDataContextualArm:
+class RealDataContextualArm:
 
 	'''Initialize the arm with a true reward and no pulls or context.'''
 	def __init__(self, contexts, rewards):
-		self.rewards = rewards
 		self.contexts = contexts
+		self.rewards = rewards
 		self.pulls = 0
 		self.context_ind = None
 
