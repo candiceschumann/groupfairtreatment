@@ -6,7 +6,7 @@ from algorithms.GroupFairParity import GroupFairParityBandit
 from algorithms.GroupFairParityInterval import GroupFairParityIntervalBandit
 from algorithms.GroupFairProportional import GroupFairProportionalBandit
 from algorithms.GroupFairProportionalInterval import GroupFairProportionalIntervalBandit
-from algorithms.GroupFairTopInterval import GroupFairTopInterval
+from algorithms.GroupFairTopInterval import GroupFairTopIntervalBandit
 from ContextualArm import GeneralContextualArm
 from ErrorContextualArm import ErrorContextualArm
 from RealContextualArm import RealDataContextualArm
@@ -118,7 +118,7 @@ class Experiment:
 					experiment.delta, experiment.T, self.groups))
 			elif experiment.bandit == "GroupFairTopInterval":
 				assert(self.sensitive_group is not None)
-				self.bandits.append(GroupFairTopInterval(self.num_arms, 
+				self.bandits.append(GroupFairTopIntervalBandit(self.num_arms, 
 					self.context_size, experiment.delta, experiment.T, 
 					self.groups, self.arm_to_group, self.sensitive_group))
 			else:
