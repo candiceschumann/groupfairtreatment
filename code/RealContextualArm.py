@@ -17,7 +17,7 @@ class RealDataContextualArm:
 
 	'''Randomly pull a new context, save, and return'''
 	def get_new_context(self):
-		self.context_ind = np.random.uniform(0,len(self.rewards))
+		self.context_ind = np.random.randint(0,len(self.rewards))
 		return self.contexts[self.context_ind]
 
 	'''Return the most recent context'''

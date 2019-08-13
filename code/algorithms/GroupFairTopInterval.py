@@ -14,19 +14,19 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 		self.group_beta = [None for _ in range(2)]
 		self.group_X = [None for _ in range(2)]
 		self.group_Y = [None for _ in range(2)]
-		self.sens_group_size = None
-		self.nonsens_group_size = None
-		for group_name in self.groups:
-			if self.sensitive_group[group_name]:
-				self.sens_group_size = len(self.groups[group_name])
+		self.sens_group_size = 0
+		self.nonsens_group_size = 0
+		# Count number of arms for non sensitive group and sensitive group.
+		for i in range(num_arms):
+			if self.sensitive_group[i]:
+				self.sens_group_size += 1
 			else:
-				self.nonsens_group_size = len(self.groups[group_name])
-		assert (self.sens_group_size is not None) and (self.nonsens_group_size is not None)
+				self.nonsens_group_size += 1
+		assert (self.sens_group_size > 0) and (self.nonsens_group_size > 0)
 
 	'''takes an arm index and returns the bool which indicates whether the arm's group is sensitive'''
 	def is_sensitive_group(self, arm):
-		group_name = self.arm_to_group[arm]
-		return self.sensitive_group[group_name]
+		return self.sensitive_group[arm]
 
 	'''update beta for a given arm's group'''
 	def update_group_beta(self, arm):
@@ -80,13 +80,13 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 		w = self.arm_confidence(arm, context)
 		group = self.is_sensitive_group(arm)
 		if group:
-			if math.isinf(w) or Y is None:
+			if math.isinf(w) or Y is None or self.group_beta[group] is None or self.group_beta[not group] is None:
 				return float('inf')
 			else:
 				sens_confidence = self.group_confidence(group, context)
 				nonsens_confidence = self.group_confidence(not group, context)
-				return Y + w - np.dot(self.group_beta[group], context) + sens_confidence + \
-				       np.dot(self.group_beta[not group], context) + nonsens_confidence
+				return Y + w - np.dot(self.group_beta[group].T, context) + sens_confidence + \
+				       np.dot(self.group_beta[not group].T, context) + nonsens_confidence
 		else:
 			if math.isinf(w) or Y is None:
 				return float('inf')

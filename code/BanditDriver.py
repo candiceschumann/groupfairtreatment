@@ -22,11 +22,11 @@ class BanditDriver:
 			# Get new context for this round from all of the arms.
 			contexts = [self.arms[arm].get_new_context() for arm in range(len(self.arms))]
 			true_rewards = [self.arms[arm].get_reward(contexts[arm]) for arm in range(len(self.arms))]
-			unbiased_rewards = [self.arms[arm].get_real_reward() for arm in range(len(self.arms))]
+			unbiased_rewards = [self.arms[arm].get_real_reward(contexts[arm]) for arm in range(len(self.arms))]
 			self.opt_arms.append(np.argmax(true_rewards))
 			self.opt_real_arms.append(np.argmax(unbiased_rewards))
 			self.opt_rewards.append(true_rewards[self.opt_arms[-1]])
-			self.opt_real_rewards.append()
+			self.opt_real_rewards.append(unbiased_rewards[self.opt_real_arms[-1]])
 			# Pick an arm to pull and pull it
 			arm = self.bandit.pick_arm(contexts, self.t)
 			self.which_arms.append(arm)
@@ -44,6 +44,9 @@ class BanditDriver:
 
 	def get_optimal_rewards(self):
 		return self.opt_rewards
+
+	def get_optimal_real_rewards(self):
+		return self.opt_real_rewards
 	
 	def get_pulled_arms(self):
 		return self.which_arms
@@ -51,8 +54,11 @@ class BanditDriver:
 	def get_optimal_arms(self):
 		return self.opt_arms
 
+	def get_optimal_real_arms(self):
+		return self.opt_real_arms
+
 	def get_regret(self):
 		regret = []
 		for i in range(len(self.rewards)):
-			regret.append(self.opt_rewards[i]-self.rewards[i])
+			regret.append(self.opt_real_rewards[i]-self.rewards[i])
 		return regret
