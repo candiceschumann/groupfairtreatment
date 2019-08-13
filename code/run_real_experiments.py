@@ -51,8 +51,8 @@ if __name__ == "__main__":
         context_size = len(features)
 
         deltas = [.1, .2, .3, .4, .5]
-        runs = 1
-        Ts = [2 * n * arms for n in range(1, 2)]
+        runs = 100
+        Ts = [2 * n * arms for n in range(1, 21)]
 
         algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairTopInterval"]
         filename = "../experiments/%s/_context_%s" % (args.exp, context_size)
