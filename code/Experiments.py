@@ -163,10 +163,10 @@ class Experiment:
                 seed = None
             else:
                 seed = seeds[i]
-            self.experiment_results.append(self.run_experiment(seed))
+            result = self.run_experiment(seed)
             if save:
-                with open(self.filename, 'wb') as f:
-                    pickle.dump(self.__dict__,f)
+                with open(self.filename + str(i), 'wb') as f:
+                    pickle.dump(result,f)
 
 
 # experiment = Experiment(3,2,{"Male": [0,1], "Female": [2]},["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"],[0.5,0.6])
