@@ -159,6 +159,7 @@ class Experiment:
         self.experiment_results = []
         assert (seeds is None) or (len(seeds) == x)
         for i in range(x):
+            print(i)
             if seeds is None:
                 seed = None
             else:
