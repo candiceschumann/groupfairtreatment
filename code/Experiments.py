@@ -163,6 +163,7 @@ class Experiment:
                 seed = None
             else:
                 seed = seeds[i]
+                self.create_bandits()
             result = self.run_experiment(seed)
             if save:
                 with open(self.filename + str(i), 'wb') as f:
