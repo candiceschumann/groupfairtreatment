@@ -64,10 +64,10 @@ class Experiment:
                     for idx in idxs:
                         # using (b-a)*Uniform(0,1) + a to get Uniform(a,b)
                         beta = (self.cs[group][1]-self.cs[group][0])*np.random.rand(self.context_size)+self.cs[group][0]
-                        if group_mean is None:
+                        if self.group_mean is None:
                             self.arms[idx] = GeneralContextualArm(beta,self.context_size)
                         else:
-                            if self.sensitive_group[self.arm_to_group[idx]]:
+                            if self.sensitive_group[idx]:
                                 self.arms[idx] = ErrorContextualArm(beta, self.context_size, self.group_mean, self.group_std)
                             else:
                                 self.arms[idx] = GeneralContextualArm(beta,self.context_size)

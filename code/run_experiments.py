@@ -32,37 +32,56 @@ elif args.exp == "GenderRatiosUniformSmaller":
     ratios = [1,2,3,4,5]
     deltas = [0.5,0.4,0.3,0.2,0.1]
     Ts = [10,20,30,40,50,60,70,80,90,100,250,500,750,1000,1500,2000]
-    algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval",
-                  "GroupFairProportional", "GroupFairProportionalInterval"]
-    for context in contexts:
+    error_means = [-10,-5,-2,-1,0]
+    error_std = 1
+    hardness = {"g1": (0, c), "g2": (0, c)}
+    algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"] 
+    for error_mean in error_means:   
         for ratio in ratios:
-            groups = {"g1": [i for i in range(0,ratio)], "g2": [i for i in range(ratio,arms)]}
-            filename = "../experiments/%s/ratio_%s_context_%s_%s" % (args.exp,ratio,context,args.run_name)
-            if not os.path.exists(os.path.dirname(filename)):
-                os.makedirs(os.path.dirname(filename))
-            experiment = Experiment(arms, context, groups, algorithms, deltas, Ts, "uniform", filename=filename)
-            experiment.run_x_experiments(runs)
+            for context in contexts:
+                groups = {"g1": [i for i in range(0,ratio)], "g2": [i for i in range(ratio,arms)]}
+                sensitive_group = {}
+                for i in range(0,ratio):
+                    sensitive_group[i] = True
+                for i in range(ratio,arms):
+                    sensitive_group[i] = False
+                filename = "../experiments/%s/ratio_%s_context_%s_%s" % (args.exp,ratio,context,args.run_name)
+                if not os.path.exists(os.path.dirname(filename)):
+                    os.makedirs(os.path.dirname(filename))
+                experiment = Experiment(arms, context, groups, algorithms, deltas, Ts, "uniform", filename=filename, sensitive_group=sensitive_group,group_mean=error_mean)
+                
+                experiment.run_x_experiments(runs)
 elif args.exp == "VaryContextSize":
     arms = 10
     deltas = [.1, .2, .3, .4, .5]
     cs = [1, 2, 5, 10]
-    runs = 20
+    runs = 10
     ratios = list(range(2, 6))
     Ts = [2 * n * arms for n in range(1, 21)]
-    algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval",
-                  "GroupFairProportional", "GroupFairProportionalInterval"]
+    
+    algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"] 
 
     context_sizes = [2, 3, 4, 5]
-    for context_size in context_sizes:
+    error_means = [-10,-5,-2,-1,0]
+    error_std = 1
+    for error_mean in error_means:   
         for ratio in ratios:
-            groups = {"g1": [i for i in range(0, ratio)], "g2": [i for i in range(ratio, arms)]}
-            for c in cs:
-                hardness = {"g1": (0, c), "g2": (0, c)}
-                filename = "../experiments/%s/ratio_%s_context_%s_c_%s_%s" % (args.exp,ratio,context_size,c,args.run_name)
-                if not os.path.exists(os.path.dirname(filename)):
-                    os.makedirs(os.path.dirname(filename))
-                experiment = Experiment(arms, context_size, groups, algorithms, deltas, Ts, "uniform", filename=filename, cs=hardness)
-                experiment.run_x_experiments(runs)
+            for context_size in context_sizes:
+                groups = {"g1": [i for i in range(0, ratio)], "g2": [i for i in range(ratio, arms)]}
+                sensitive_group = {}
+                for i in range(0,ratio):
+                    sensitive_group[i] = True
+                for i in range(ratio,arms):
+                    sensitive_group[i] = False
+                for c in cs:
+                    hardness = {"g1": (0, c), "g2": (0, c)}
+                    filename = "../experiments/%s/ratio_%s_context_%s_c_%s_error_%s_%s" % (args.exp,ratio,context_size,c,error_mean,args.run_name)
+                    if not os.path.exists(os.path.dirname(filename)):
+                        os.makedirs(os.path.dirname(filename))
+                    experiment = Experiment(arms, context_size, groups, 
+                        algorithms, deltas, Ts, "uniform", filename=filename, cs=hardness,
+                        sensitive_group=sensitive_group, group_mean=error_mean, group_std=error_std)
+                    experiment.run_x_experiments(runs)
 elif args.exp == 'VaryNumGroups':
     arms = 10
     deltas = [.1, .2, .3, .4, .5]
