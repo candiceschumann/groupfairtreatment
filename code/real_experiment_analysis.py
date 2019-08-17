@@ -7,11 +7,40 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import os
+import pandas as pd
 
 SingleResult = collections.namedtuple('SingleResult', 
     ['name', 'experiment', 'rewards', 'opt_real_rewards', 
     'pulled_arms', 'opt_real_arms', 'regret'])
 AverageResult = collections.namedtuple('AverageResult', ['name', 'mean', 'std'])
+
+# algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairTopInterval"]
+algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
+deltas = [.1, .2, .3, .4, .5]
+
+def plot_things(averages, path, title, ylabel):
+    # Sort by Time
+        for key in averages.keys():
+            averages[key].sort(key=lambda x: x.name)
+        # Make graphs
+        for delta in deltas:
+            fig, ax = plt.subplots()
+            for algorithm in algorithms:
+                sub_name = algorithm + "_" + str(delta)
+                Ts = [x.name for x in averages[sub_name]]
+                means = np.array([x.mean for x in averages[sub_name]])
+                stds = np.array([x.std for x in averages[sub_name]])
+                ax.plot(Ts, means, label=algorithm)
+                # ax.fill_between(Ts, means + stds, means - stds)
+
+            ax.set(xlabel='T', ylabel=ylabel,
+                   title=title + ' with delta=' + str(delta))
+            ax.legend()
+            ax.grid()
+            plt.tight_layout()
+            fig.savefig(path + str(delta) + ".png")
+            # plt.show()
+            plt.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Runs Group Fair MAB experiments')
@@ -20,9 +49,7 @@ if __name__ == "__main__":
     parser.add_argument('dir', help='dir')
     args = parser.parse_args()
 
-    # algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairTopInterval"]
-    algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
-    deltas = [.1, .2, .3, .4, .5]
+
 
     if args.type == 'remap':
         with open(args.filename, 'rb') as f:
@@ -53,9 +80,7 @@ if __name__ == "__main__":
             experiments = pickle.load(f)
         path = args.dir + "/regret/"
         if not os.path.exists(path):
-            os.makedirs()
-        print(experiments['TopInterval_0.1_20'][0].regret)
-        print(experiments['TopInterval_0.5_20'][0].regret)
+            os.makedirs(path)
         # Get average regret with std
         averages = {}
         for key in experiments.keys():
@@ -69,31 +94,73 @@ if __name__ == "__main__":
                 averages[sub_name].append(average_regret)
             else:
                 averages[sub_name] = [average_regret]
-        # Sort by Time
-        for key in averages.keys():
-            averages[key].sort(key=lambda x: x.name)
-        # Make graphs
-        for delta in deltas:
-            fig, ax = plt.subplots()
-            for algorithm in algorithms:
-                sub_name = algorithm + "_" + str(delta)
-                Ts = [x.name for x in averages[sub_name]]
-                means = np.array([x.mean for x in averages[sub_name]])
-                stds = np.array([x.std for x in averages[sub_name]])
-                ax.plot(Ts, means, label=algorithm)
-                if algorithm == "TopInterval":
-                    print(means)
-                # ax.fill_between(Ts, means + stds, means - stds)
-
-            ax.set(xlabel='T', ylabel='Average Regret',
-                   title='Regret with delta=' + str(delta))
-            ax.legend()
-            ax.grid()
-            plt.tight_layout()
-            fig.savefig(args.dir + "/regret/" + str(delta) + ".png")
-            # plt.show()
-            plt.close()
+        plot_things(averages, path, "Regret", "Average Regret")
             # break
+    elif args.type == "arms_pulled":
+        # Read in the data
+        data = pd.read_csv('../family_income/family_income.csv')
+        columns = pd.read_csv('../family_income/column_types.csv')
+        # Bucket age
+        age_buckets = pd.cut(data["Household Head Age"],5).astype(str)
+        data["Household Head Age"] = age_buckets
+        groups = pd.unique(data["Household Head Age"])
+        gender_groups = pd.unique(data["Household Head Sex"])
+        # Change categories to numbers.
+        features = []
+        for index, row in columns.iterrows():
+            if row.Name == 'Total Household Income':
+                income = data[row.Name].values
+            elif row.Name != "Household Head Age" and row.Name != "Household Head Sex":
+                if row.Type == "vals":
+                    data[row.Name] = data[row.Name].astype('category')
+                    data[row.Name] = data[row.Name].cat.codes
+                features.append(row.Name)
+        # Group by groups and gender
+        gk = data.groupby(['Household Head Age', 'Household Head Sex'])
+        context_matrix = []
+        reward_matrix = []
+        group_names = []
+        idx = 0
+        groups = {'sensitive': [], 'not_sensitive': []}
+        sensitive_group = {}
+        for name, group in gk:
+            group_names.append(name)
+            if name[1] == "Female":
+                groups['sensitive'].append(idx)
+                sensitive_group[idx] = True
+            else:
+                groups['not_sensitive'].append(idx)
+                sensitive_group[idx] = False
+            context_matrix.append(group[features].values)
+            reward_matrix.append(group['Total Household Income'].values)
+            idx += 1
+        print(sensitive_group)
+        arms = len(group_names)
+        with open(args.filename, 'rb') as f:
+            experiments = pickle.load(f)
+        path = args.dir + "/arms_pulled/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        # Get average sensitive arms pulled with std
+        averages = {}
+        for key in experiments.keys():
+            sensitive_pulled = []
+            for experiment in experiments[key]:
+                num_sensitive = 0
+                for arm in experiment.pulled_arms:
+                    if not sensitive_group[arm]:
+                        num_sensitive += 1
+                sensitive_pulled.append((num_sensitive*1.0)/len(experiment.pulled_arms))
+                T = experiment.experiment.T
+                sub_name = experiment.experiment.bandit + "_" + str(experiment.experiment.delta)
+            average_sensitive_pulled = AverageResult(T,np.mean(sensitive_pulled),np.std(sensitive_pulled))
+            if sub_name in averages:
+                averages[sub_name].append(average_sensitive_pulled)
+            else:
+                averages[sub_name] = [average_sensitive_pulled]
+        print(averages)
+
+        plot_things(averages, path, "Percentage of sensitive arms pulled", "Average # sensitive arms pulled")
 
 
 
