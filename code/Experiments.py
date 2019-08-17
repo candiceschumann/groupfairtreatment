@@ -166,9 +166,10 @@ class Experiment:
                 seed = seeds[i]
                 self.create_bandits()
             result = self.run_experiment(seed)
+            self.experiment_results.append(result)
             if save:
-                with open(self.filename + str(i), 'wb') as f:
-                    pickle.dump(result,f)
+                with open(self.filename, 'wb') as f:
+                    pickle.dump(self.__dict__,f)
 
 
 # experiment = Experiment(3,2,{"Male": [0,1], "Female": [2]},["TopInterval", "IntervalChaining", "Random", "GroupFairParity", "GroupFairParityInterval", "GroupFairProportional", "GroupFairProportionalInterval"],[0.5,0.6])
