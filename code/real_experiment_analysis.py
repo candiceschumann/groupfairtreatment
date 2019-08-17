@@ -75,6 +75,9 @@ if __name__ == "__main__":
         print(remapped_experiments.keys())
         with open(args.dir + "remapped_experiments.pkl",'wb') as f:
             pickle.dump(remapped_experiments,f)
+        print(experiment['sensitive_group'])
+        with open(args.dir + "groups.pkl", 'wb') as f:
+            pickle.dump(experiment['sensitive_group'],f)
     elif args.type == "regret":
         with open(args.filename, 'rb') as f:
             experiments = pickle.load(f)
@@ -97,45 +100,8 @@ if __name__ == "__main__":
         plot_things(averages, path, "Regret", "Average Regret")
             # break
     elif args.type == "arms_pulled":
-        # Read in the data
-        data = pd.read_csv('../family_income/family_income.csv')
-        columns = pd.read_csv('../family_income/column_types.csv')
-        # Bucket age
-        age_buckets = pd.cut(data["Household Head Age"],5).astype(str)
-        data["Household Head Age"] = age_buckets
-        groups = pd.unique(data["Household Head Age"])
-        gender_groups = pd.unique(data["Household Head Sex"])
-        # Change categories to numbers.
-        features = []
-        for index, row in columns.iterrows():
-            if row.Name == 'Total Household Income':
-                income = data[row.Name].values
-            elif row.Name != "Household Head Age" and row.Name != "Household Head Sex":
-                if row.Type == "vals":
-                    data[row.Name] = data[row.Name].astype('category')
-                    data[row.Name] = data[row.Name].cat.codes
-                features.append(row.Name)
-        # Group by groups and gender
-        gk = data.groupby(['Household Head Age', 'Household Head Sex'])
-        context_matrix = []
-        reward_matrix = []
-        group_names = []
-        idx = 0
-        groups = {'sensitive': [], 'not_sensitive': []}
-        sensitive_group = {}
-        for name, group in gk:
-            group_names.append(name)
-            if name[1] == "Female":
-                groups['sensitive'].append(idx)
-                sensitive_group[idx] = True
-            else:
-                groups['not_sensitive'].append(idx)
-                sensitive_group[idx] = False
-            context_matrix.append(group[features].values)
-            reward_matrix.append(group['Total Household Income'].values)
-            idx += 1
-        print(sensitive_group)
-        arms = len(group_names)
+        with open(args.dir + '/groups.pkl', 'rb') as f:
+            sensitive_group = pickle.load(f)
         with open(args.filename, 'rb') as f:
             experiments = pickle.load(f)
         path = args.dir + "/arms_pulled/"
