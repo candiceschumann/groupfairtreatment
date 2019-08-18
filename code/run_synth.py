@@ -27,7 +27,7 @@ if __name__ == "__main__":
         c = 10
         hardness = {"g1": (0, c), "g2": (0, c)}
         delta = 0.1
-        error_mean = -10
+        error_mean = 10
         error_std = 1
         filename = "../experiments/%s/context_%s_ratio_%s_c_%s_delta_%s_error_%s_arms_%s_run_%s" % (args.exp, 
             context_size, ratio, c, delta, error_mean, arms, args.run_name)

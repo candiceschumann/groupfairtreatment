@@ -11,7 +11,7 @@ class ErrorContextualArm(GeneralContextualArm):
 
     '''Find the reward of a given context'''
     def get_reward(self, context):
-        return np.dot(self.beta.T,context)[0] + np.dot(self.group_beta.T,context)[0]
+        return np.dot(self.beta.T,context)[0] - np.dot(self.group_beta.T,context)[0]
 
     def get_real_reward(self, context):
         return np.dot(self.beta.T, context)[0]
