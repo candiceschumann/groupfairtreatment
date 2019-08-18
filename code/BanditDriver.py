@@ -8,6 +8,7 @@ class BanditDriver:
 		self.bandit = bandit
 		self.t = 0
 		self.rewards  = []
+		self.real_rewards = []
 		self.opt_rewards = []
 		self.opt_real_rewards = []
 		self.which_arms = []
@@ -32,6 +33,8 @@ class BanditDriver:
 			self.which_arms.append(arm)
 			reward = self.arms[arm].pull_arm()
 			self.rewards.append(reward)
+			real_reward = true_rewards[arm]
+			self.real_rewards.append(real_reward)
 			# Update the bandit
 			self.bandit.update(arm, contexts[arm], reward)
 
