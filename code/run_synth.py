@@ -11,6 +11,7 @@ if __name__ == "__main__":
 
     algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"] 
     runs = 10
+    seeds = [np.random.random_integers(100000000) for _ in range(runs)]
 
     if args.exp == 'T':
         arms = 10
@@ -66,7 +67,7 @@ if __name__ == "__main__":
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
                         group_std=error_std)
-            experiment.run_x_experiments(runs,seeds=[np.random.random_integers(100000000) for _ in range(runs)])
+            experiment.run_x_experiments(runs,seeds=seeds)
     if args.exp == "c":
         arms = 10
         Ts = [1000]
@@ -95,7 +96,7 @@ if __name__ == "__main__":
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
                         group_std=error_std)
-            experiment.run_x_experiments(runs,seeds=[np.random.random_integers(100000000) for _ in range(runs)])
+            experiment.run_x_experiments(runs,seeds=seeds)
     if args.exp == "error":
         arms = 10
         Ts = [1000]
@@ -124,6 +125,6 @@ if __name__ == "__main__":
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
                         group_std=error_std)
-            experiment.run_x_experiments(runs,seeds=[np.random.random_integers(100000000) for _ in range(runs)])
+            experiment.run_x_experiments(runs,seeds=seeds)
 
 
