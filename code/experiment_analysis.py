@@ -168,4 +168,115 @@ if __name__ == "__main__":
             os.makedirs(path)
         plot_two_things(average_regrets, average_real_regrets, os.path.join(path,'regret.png'), 'Regret over budget T', 'Regret', 'T', '', 'real')
         plot_things(average_pull, os.path.join(path, 'pulls.png'), 'Sensitive arms pulled', 'Percent sensitive arms pulled', 'T')
-        
+    if args.type == "context_size":
+        with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'rb') as f:
+            experiments = pickle.load(f)
+        average_real_regrets = {}
+        average_regrets = {}
+        average_pull = {}
+        for key in experiments.keys():
+            regret = []
+            real_regret = []
+            sensitive_pulled = []
+            for experiment in experiments[key]:
+                context_size = experiment.experiment.context_size
+                algorithm = experiment.experiment.bandit
+                regret.append(np.mean(np.array(experiment.opt_rewards) - np.array(experiment.rewards)))
+                real_regret.append(np.mean(np.array(experiment.opt_real_rewards) - np.array(experiment.rewards)))
+                num_sensitive = 0
+                for arm in experiment.pulled_arms:
+                    if experiment.experiment.sensitive_group[arm]:
+                        num_sensitive += 1
+                sensitive_pulled.append((num_sensitive*1.0)/len(experiment.pulled_arms))
+                # break
+            regret = AverageResult(context_size,np.mean(regret), np.std(regret))
+            real_regret = AverageResult(context_size,np.mean(real_regret), np.std(real_regret))
+            sensitive_pulled = AverageResult(context_size, np.mean(sensitive_pulled), np.std(sensitive_pulled))
+            if algorithm in average_regrets:
+                average_regrets[algorithm].append(regret)
+                average_real_regrets[algorithm].append(real_regret)
+                average_pull[algorithm].append(sensitive_pulled)
+            else:
+                average_regrets[algorithm] = [regret]
+                average_real_regrets[algorithm] = [real_regret]
+                average_pull[algorithm] = [sensitive_pulled]
+        path = args.dir + "/graphs/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        plot_two_things(average_regrets, average_real_regrets, os.path.join(path,'regret.png'), 'Regret over context size', 'Regret', 'context size d', '', 'real')
+        plot_things(average_pull, os.path.join(path, 'pulls.png'), 'Sensitive arms pulled', 'Percent sensitive arms pulled', 'context size d')
+    if args.type == "c":
+        with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'rb') as f:
+            experiments = pickle.load(f)
+        average_real_regrets = {}
+        average_regrets = {}
+        average_pull = {}
+        for key in experiments.keys():
+            regret = []
+            real_regret = []
+            sensitive_pulled = []
+            for experiment in experiments[key]:
+                c = experiment.experiment.c
+                algorithm = experiment.experiment.bandit
+                regret.append(np.mean(np.array(experiment.opt_rewards) - np.array(experiment.rewards)))
+                real_regret.append(np.mean(np.array(experiment.opt_real_rewards) - np.array(experiment.rewards)))
+                num_sensitive = 0
+                for arm in experiment.pulled_arms:
+                    if experiment.experiment.sensitive_group[arm]:
+                        num_sensitive += 1
+                sensitive_pulled.append((num_sensitive*1.0)/len(experiment.pulled_arms))
+                # break
+            regret = AverageResult(c,np.mean(regret), np.std(regret))
+            real_regret = AverageResult(c,np.mean(real_regret), np.std(real_regret))
+            sensitive_pulled = AverageResult(c, np.mean(sensitive_pulled), np.std(sensitive_pulled))
+            if algorithm in average_regrets:
+                average_regrets[algorithm].append(regret)
+                average_real_regrets[algorithm].append(real_regret)
+                average_pull[algorithm].append(sensitive_pulled)
+            else:
+                average_regrets[algorithm] = [regret]
+                average_real_regrets[algorithm] = [real_regret]
+                average_pull[algorithm] = [sensitive_pulled]
+        path = args.dir + "/graphs/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        plot_two_things(average_regrets, average_real_regrets, os.path.join(path,'regret.png'), 'Regret', 'Regret', 'c', '', 'real')
+        plot_things(average_pull, os.path.join(path, 'pulls.png'), 'Sensitive arms pulled', 'Percent sensitive arms pulled', 'c')
+    if args.type == "error":
+        with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'rb') as f:
+            experiments = pickle.load(f)
+        average_real_regrets = {}
+        average_regrets = {}
+        average_pull = {}
+        for key in experiments.keys():
+            regret = []
+            real_regret = []
+            sensitive_pulled = []
+            for experiment in experiments[key]:
+                error_mean = experiment.experiment.error_mean
+                algorithm = experiment.experiment.bandit
+                regret.append(np.mean(np.array(experiment.opt_rewards) - np.array(experiment.rewards)))
+                real_regret.append(np.mean(np.array(experiment.opt_real_rewards) - np.array(experiment.rewards)))
+                num_sensitive = 0
+                for arm in experiment.pulled_arms:
+                    if experiment.experiment.sensitive_group[arm]:
+                        num_sensitive += 1
+                sensitive_pulled.append((num_sensitive*1.0)/len(experiment.pulled_arms))
+                # break
+            regret = AverageResult(error_mean,np.mean(regret), np.std(regret))
+            real_regret = AverageResult(error_mean,np.mean(real_regret), np.std(real_regret))
+            sensitive_pulled = AverageResult(error_mean, np.mean(sensitive_pulled), np.std(sensitive_pulled))
+            if algorithm in average_regrets:
+                average_regrets[algorithm].append(regret)
+                average_real_regrets[algorithm].append(real_regret)
+                average_pull[algorithm].append(sensitive_pulled)
+            else:
+                average_regrets[algorithm] = [regret]
+                average_real_regrets[algorithm] = [real_regret]
+                average_pull[algorithm] = [sensitive_pulled]
+        path = args.dir + "/graphs/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        plot_two_things(average_regrets, average_real_regrets, os.path.join(path,'regret.png'), 'Regret', 'Regret', 'error mean', '', 'real')
+        plot_things(average_pull, os.path.join(path, 'pulls.png'), 'Sensitive arms pulled', 'Percent sensitive arms pulled', 'error mean')
+

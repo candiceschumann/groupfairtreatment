@@ -62,10 +62,11 @@ class Experiment:
                 self.arms = [None for _ in range(self.num_arms)]
                 if self.group_mean is not None:
                     group_beta = np.random.rand(self.context_size) + self.group_mean
+
                 for group, idxs in self.groups.items():
                     for idx in idxs:
                         # using (b-a)*Uniform(0,1) + a to get Uniform(a,b)
-                        beta = (self.cs[group][1]-self.cs[group][0])*np.random.rand(self.context_size)+self.cs[group][0]
+                        beta = (self.cs[group][1]-self.cs[group][0])*np.random.rand(self.context_size)+self.cs[group][0] + 30
                         if self.group_mean is None:
                             self.arms[idx] = GeneralContextualArm(beta,self.context_size)
                         else:

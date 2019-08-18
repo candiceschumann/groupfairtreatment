@@ -32,7 +32,7 @@ class GeneralContextualArm:
         if self.context is None:
             raise ValueError('trying to pull an arm with no context')
         self.pulls += 1
-        return abs(self.get_reward(self.context) + np.random.randn())
+        return self.get_reward(self.context) + np.random.randn()
 
     '''Find the reward of a given context'''
     def get_reward(self,context):
