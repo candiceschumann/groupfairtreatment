@@ -1,6 +1,7 @@
 from Experiments import Experiment
 import os
 import argparse
+import numpy as np
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Runs Group Fair MAB experiments')
