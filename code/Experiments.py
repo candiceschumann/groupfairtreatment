@@ -164,7 +164,7 @@ class Experiment:
                 seed = None
             else:
                 seed = seeds[i]
-                self.create_bandits()
+            self.create_bandits()
             result = self.run_experiment(seed)
             self.experiment_results.append(result)
             if save:
