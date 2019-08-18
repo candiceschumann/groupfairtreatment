@@ -51,7 +51,7 @@ class BanditDriver:
 		return self.rewards
 
 	def get_real_rewards(self):
-		return self.rewards
+		return self.real_rewards
 
 	def get_optimal_rewards(self):
 		return self.opt_rewards
