@@ -90,7 +90,7 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 		if group:
 			group = 1
 		else:
-			group = 2
+			group = 0
 		sens_confidence = self.group_confidence(group, context)
 		nonsens_confidence = self.group_confidence(not group, context)
 		# if group:
