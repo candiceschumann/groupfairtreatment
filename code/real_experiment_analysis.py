@@ -18,7 +18,7 @@ AverageResult = collections.namedtuple('AverageResult', ['name', 'mean', 'std'])
 algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
 deltas = [.1, .2, .3, .4, .5]
 
-def plot_things(averages, path, title, ylabel):
+def plot_things(averages, path, title, ylabel, xlabel='T'):
     # Sort by Time
         for key in averages.keys():
             averages[key].sort(key=lambda x: x.name)
@@ -26,15 +26,15 @@ def plot_things(averages, path, title, ylabel):
         for delta in deltas:
             fig, ax = plt.subplots()
             for algorithm in algorithms:
-                sub_name = algorithm + "_" + str(delta)
+                sub_name = algorithm
                 Ts = [x.name for x in averages[sub_name]]
                 means = np.array([x.mean for x in averages[sub_name]])
                 stds = np.array([x.std for x in averages[sub_name]])
                 ax.plot(Ts, means, label=algorithm)
                 # ax.fill_between(Ts, means + stds, means - stds)
 
-            ax.set(xlabel='T', ylabel=ylabel,
-                   title=title + ' with delta=' + str(delta))
+            ax.set(xlabel=xlabel, ylabel=ylabel,
+                   title=title)
             ax.legend()
             ax.grid()
             plt.tight_layout()

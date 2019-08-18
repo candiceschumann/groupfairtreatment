@@ -11,5 +11,6 @@ class BiasContextualArm(ErrorContextualArm):
 
 	'''Find the reward of a given context'''
 	def get_reward(self, context):
+        print('here3')
 		return np.dot(self.beta.T,context)[0] + np.random.normal(self.error_mean, self.error_std) \
 		       + np.dot(self.group_bias.T, context)[0]
