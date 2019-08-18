@@ -131,7 +131,7 @@ if __name__ == "__main__":
         arms = 10
         Ts = [1000]
         context_size = 2
-        ratios = [5]
+        ratios = [2,3,4,5,6,7,8]
         c = 10
         hardness = {"g1": (0, c), "g2": (0, c)}
         delta = 0.1
@@ -144,6 +144,36 @@ if __name__ == "__main__":
                 sensitive_group[i] = True
             for i in range(ratio,arms):
                 sensitive_group[i] = False
+
+            filename = "../experiments/%s/context_%s_ratio_%s_c_%s_delta_%s_error_%s_arms_%s_run_%s" % (args.exp, 
+                        context_size, ratio, c, delta, error_mean, arms, args.run_name)
+            if not os.path.exists(os.path.dirname(filename)):
+                os.makedirs(os.path.dirname(filename))
+
+            experiment = Experiment(arms,context_size,groups,
+                        bandit_types=algorithms,deltas=[delta],
+                        Ts=Ts,arm_type="uniform",
+                        filename=filename,
+                        cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
+                        group_std=error_std)
+            experiment.run_x_experiments(runs,seeds=seeds)
+    if args.exp == "delta":
+        arms = 10
+        Ts = [1000]
+        context_size = 2
+        ratio = 5
+        groups = {"g1": [i for i in range(0, ratio)], "g2": [i for i in range(ratio, arms)]}
+        sensitive_group = {}
+        for i in range(0,ratio):
+            sensitive_group[i] = True
+        for i in range(ratio,arms):
+            sensitive_group[i] = False
+        c = 10
+        hardness = {"g1": (0, c), "g2": (0, c)}
+        deltas = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5]
+        error_mean = -10
+        error_std = 1
+        for delta in deltas:
 
             filename = "../experiments/%s/context_%s_ratio_%s_c_%s_delta_%s_error_%s_arms_%s_run_%s" % (args.exp, 
                         context_size, ratio, c, delta, error_mean, arms, args.run_name)
