@@ -54,7 +54,7 @@ if __name__ == "__main__":
         c = 10
         hardness = {"g1": (0, c), "g2": (0, c)}
         delta = 0.1
-        error_mean = -10
+        error_mean = 10
         error_std = 1
         for context_size in context_sizes:
             filename = "../experiments/%s/context_%s_ratio_%s_c_%s_delta_%s_error_%s_arms_%s_run_%s" % (args.exp, 
@@ -81,7 +81,7 @@ if __name__ == "__main__":
             sensitive_group[i] = False
         cs = [i for i in range(2,11)]
         delta = 0.1
-        error_mean = -10
+        error_mean = 10
         error_std = 1
         for c in cs:
             hardness = {"g1": (0, c), "g2": (0, c)}
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         c = 10
         hardness = {"g1": (0, c), "g2": (0, c)}
         delta = 0.1
-        error_means = [-i for i in range(10)]
+        error_means = [i for i in range(10)]
         error_std = 1
         for error_mean in error_means:
             filename = "../experiments/%s/context_%s_ratio_%s_c_%s_delta_%s_error_%s_arms_%s_run_%s" % (args.exp, 
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         c = 10
         hardness = {"g1": (0, c), "g2": (0, c)}
         delta = 0.1
-        error_mean = -10
+        error_mean = 10
         error_std = 1
         for ratio in ratios:
             groups = {"g1": [i for i in range(0, ratio)], "g2": [i for i in range(ratio, arms)]}
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         c = 10
         hardness = {"g1": (0, c), "g2": (0, c)}
         deltas = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5]
-        error_mean = -10
+        error_mean = 10
         error_std = 1
         for delta in deltas:
 
@@ -194,7 +194,7 @@ if __name__ == "__main__":
         c = 10
         hardness = {"g1": (0, c), "g2": (0, c)}
         delta = 0.1
-        error_mean = -10
+        error_mean = 10
         error_std = 1
         for arms in num_arms:
             ratio = int(arms/2)

@@ -79,19 +79,20 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 		Y = self.estimate_reward(arm, context)
 		w = self.arm_confidence(arm, context)
 		group = self.is_sensitive_group(arm)
+		sens_confidence = self.group_confidence(group, context)
+		nonsens_confidence = self.group_confidence(not group, context)
 		if group:
 			if math.isinf(w) or Y is None or self.group_beta[group] is None or self.group_beta[not group] is None:
 				return float('inf')
 			else:
-				sens_confidence = self.group_confidence(group, context)
-				nonsens_confidence = self.group_confidence(not group, context)
+				
 				return Y + w - np.dot(self.group_beta[group].T, context) + sens_confidence + \
 				       np.dot(self.group_beta[not group].T, context) + nonsens_confidence
 		else:
 			if math.isinf(w) or Y is None:
 				return float('inf')
 			else:
-				return Y + w
+				return Y + w + sens_confidence + nonsens_confidence
 
 	def uppers(self, X):
 		u = [None for _ in range(self.num_arms)]
