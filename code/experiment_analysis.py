@@ -27,8 +27,9 @@ if __name__ == "__main__":
         for filename in files:
             # Get information from the filename
             print(filename)
-            i1 = filename.index('_context_')
-            if i1 == -1:
+            try:
+                i1 = filename.index('_context_')
+            except:
                 continue
             ratio = filename[len('ratio_'):i1]
             i2 = filename.index('_c_')
