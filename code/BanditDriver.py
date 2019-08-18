@@ -23,17 +23,22 @@ class BanditDriver:
 			# Get new context for this round from all of the arms.
 			contexts = [self.arms[arm].get_new_context() for arm in range(len(self.arms))]
 			true_rewards = [self.arms[arm].get_reward(contexts[arm]) for arm in range(len(self.arms))]
+			# print (true_rewards)
 			unbiased_rewards = [self.arms[arm].get_real_reward(contexts[arm]) for arm in range(len(self.arms))]
+			# print (unbiased_rewards)
 			self.opt_arms.append(np.argmax(true_rewards))
 			self.opt_real_arms.append(np.argmax(unbiased_rewards))
 			self.opt_rewards.append(true_rewards[self.opt_arms[-1]])
 			self.opt_real_rewards.append(unbiased_rewards[self.opt_real_arms[-1]])
+			# print("round " + str(i))
 			# Pick an arm to pull and pull it
 			arm = self.bandit.pick_arm(contexts, self.t)
 			self.which_arms.append(arm)
 			reward = self.arms[arm].pull_arm()
+			# print ("reward " + str(reward))
 			self.rewards.append(reward)
-			real_reward = true_rewards[arm]
+			real_reward = unbiased_rewards[arm]
+			# print ("real_reward" + str(unbiased_rewards[arm]))
 			self.real_rewards.append(real_reward)
 			# Update the bandit
 			self.bandit.update(arm, contexts[arm], reward)
@@ -43,6 +48,9 @@ class BanditDriver:
 		self.run_for_t_times(self.bandit.get_T() - self.t)
 
 	def get_received_rewards(self):
+		return self.rewards
+
+	def get_real_rewards(self):
 		return self.rewards
 
 	def get_optimal_rewards(self):

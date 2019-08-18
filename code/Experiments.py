@@ -15,7 +15,7 @@ import collections
 import pickle
 
 ExperimentTuple = collections.namedtuple('ExperimentTuple', ['bandit','delta','T'])
-Results = collections.namedtuple('Results', ['seed','experiments','rewards','opt_rewards','opt_real_rewards','pulled_arms','opt_arms','opt_real_arms','regret'])
+Results = collections.namedtuple('Results', ['seed','experiments','rewards','real_rewards','opt_rewards','opt_real_rewards','pulled_arms','opt_arms','opt_real_arms','regret'])
 
 class Experiment:
 
@@ -132,6 +132,7 @@ class Experiment:
         if seed is None:
             seed = np.random.random_integers(100000000)
         rewards = []
+        real_rewards = []
         opt_rewards = []
         opt_real_rewards = []
         pulled_arms = []
@@ -150,6 +151,7 @@ class Experiment:
             driver = BanditDriver(self.arms,bandit)
             driver.complete_run()
             rewards.append(driver.get_received_rewards())
+            real_rewards.append(driver.get_real_rewards())
             opt_rewards.append(driver.get_optimal_rewards())
             pulled_arms.append(driver.get_pulled_arms())
             opt_arms.append(driver.get_optimal_arms())
@@ -157,7 +159,7 @@ class Experiment:
             opt_real_rewards.append(driver.get_optimal_real_rewards())
             opt_real_arms.append(driver.get_optimal_real_arms())
 
-        return Results(seed,self.experiments,rewards,opt_rewards,opt_real_rewards,pulled_arms,opt_arms,opt_real_arms,regret)
+        return Results(seed,self.experiments,rewards,real_rewards,opt_rewards,opt_real_rewards,pulled_arms,opt_arms,opt_real_arms,regret)
 
     def run_x_experiments(self,x,save=True,seeds=None):
         self.experiment_results = []
