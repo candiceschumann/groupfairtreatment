@@ -71,6 +71,7 @@ class Experiment:
                             self.arms[idx] = GeneralContextualArm(beta,self.context_size)
                         else:
                             if self.sensitive_group[idx]:
+                                print('here')
                                 self.arms[idx] = ErrorContextualArm(beta, self.context_size, group_beta)
                             else:
                                 self.arms[idx] = GeneralContextualArm(beta,self.context_size)

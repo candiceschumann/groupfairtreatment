@@ -31,6 +31,10 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 	'''update beta for a given arm's group'''
 	def update_group_beta(self, arm):
 		group = self.is_sensitive_group(arm)
+		if group:
+			group = 1
+		else:
+			group = 0
 		if self.group_X[group] is not None:
 			tmp1 = np.dot(self.group_X[group].T, self.group_X[group])
 			tmp1 = np.linalg.pinv(tmp1)
@@ -40,6 +44,10 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 	'''update context & reward for a given arm's group, given context and reward observed'''
 	def update_group_reward(self, arm, context, Y):
 		group = self.is_sensitive_group(arm)
+		if group:
+			group = 1
+		else:
+			group = 0
 		if self.group_X[group] is None or self.group_Y[group] is None:
 			self.group_X[group] = np.array([context])
 			self.group_Y[group] = np.array([[Y]])
@@ -79,20 +87,24 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 		Y = self.estimate_reward(arm, context)
 		w = self.arm_confidence(arm, context)
 		group = self.is_sensitive_group(arm)
+		if group:
+			group = 1
+		else:
+			group = 2
 		sens_confidence = self.group_confidence(group, context)
 		nonsens_confidence = self.group_confidence(not group, context)
-		if group:
-			if math.isinf(w) or Y is None or self.group_beta[group] is None or self.group_beta[not group] is None:
-				return float('inf')
-			else:
-				
-				return Y + w - np.dot(self.group_beta[group].T, context) + sens_confidence + \
-				       np.dot(self.group_beta[not group].T, context) + nonsens_confidence
+		# if group:
+		if math.isinf(w) or Y is None or self.group_beta[group] is None or self.group_beta[not group] is None:
+			return float('inf')
 		else:
-			if math.isinf(w) or Y is None:
-				return float('inf')
-			else:
-				return Y + w + sens_confidence + nonsens_confidence
+			
+			return Y + w - np.dot(self.group_beta[group].T, context) + sens_confidence + \
+			       np.dot(np.ones_like(self.group_beta[group]).T, context)
+		# else:
+		# 	if math.isinf(w) or Y is None:
+		# 		return float('inf')
+		# 	else:
+		# 		return Y + w + sens_confidence + nonsens_confidence
 
 	def uppers(self, X):
 		u = [None for _ in range(self.num_arms)]
