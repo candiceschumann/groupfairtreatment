@@ -26,13 +26,14 @@ class BanditDriver:
 			# Get new context for this round from all of the arms.
 			contexts = [self.arms[arm].get_new_context() for arm in range(len(self.arms))]
 			true_rewards = [self.arms[arm].get_reward(contexts[arm]) for arm in range(len(self.arms))]
-			# print (true_rewards)
+			print (true_rewards)
 			unbiased_rewards = [self.arms[arm].get_real_reward(contexts[arm]) for arm in range(len(self.arms))]
-			# print (unbiased_rewards)
+			print (unbiased_rewards)
 			self.opt_arms.append(np.argmax(true_rewards))
 			self.opt_real_arms.append(np.argmax(unbiased_rewards))
 			self.opt_rewards.append(true_rewards[self.opt_arms[-1]])
 			self.opt_real_rewards.append(unbiased_rewards[self.opt_real_arms[-1]])
+			print("round " + str(i))
 			# Pick an arm to pull and pull it
 			arm = self.bandit.pick_arm(contexts, self.t)
 			try:
@@ -40,18 +41,21 @@ class BanditDriver:
 				# print(self.bandit.uppers(contexts))
 			except:
 				expected = self.bandit.lower_upper(arm, contexts[arm]).upper
+			print('expected ' + str(expected))
 
 			self.which_arms.append(arm)
 			reward = self.arms[arm].pull_arm()
+			print ("reward " + str(reward))
 			reward_sum += reward
 			self.rewards.append(reward)
 			real_reward = unbiased_rewards[arm]
+			print ("real_reward" + str(unbiased_rewards[arm]))
 			real_reward_sum += real_reward
 			self.real_rewards.append(real_reward)
 			# Update the bandit
 			self.bandit.update(arm, contexts[arm], reward)
-		# print("reward sum " + str(reward_sum/50))
-		# print("real reward sum " + str(real_reward_sum/50))
+		print("reward sum " + str(reward_sum/500))
+		print("real reward sum " + str(real_reward_sum/500))
 
 
 	def complete_run(self):
