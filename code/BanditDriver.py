@@ -50,8 +50,8 @@ class BanditDriver:
 			self.real_rewards.append(real_reward)
 			# Update the bandit
 			self.bandit.update(arm, contexts[arm], reward)
-		print("reward sum " + str(reward_sum/50))
-		print("real reward sum " + str(real_reward_sum/50))
+		# print("reward sum " + str(reward_sum/50))
+		# print("real reward sum " + str(real_reward_sum/50))
 
 
 	def complete_run(self):
