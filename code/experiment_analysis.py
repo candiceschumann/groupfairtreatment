@@ -158,8 +158,6 @@ if __name__ == "__main__":
                 elif args.type == 'ratio':
                     x = experiment.experiment.ratio
                 algorithm = experiment.experiment.bandit
-                print(experiment.rewards)
-                print(experiment.real_rewards)
                 regret.append(np.mean(np.array(experiment.opt_rewards) - np.array(experiment.rewards)))
                 real_regret.append(np.mean(np.array(experiment.opt_real_rewards) - np.array(experiment.real_rewards)))
                 num_sensitive = 0
@@ -169,10 +167,7 @@ if __name__ == "__main__":
                 sensitive_pulled.append((num_sensitive*1.0)/len(experiment.pulled_arms))
                 # break
             regret = AverageResult(x,np.mean(regret), np.std(regret))
-            print(regret)
             real_regret = AverageResult(x,np.mean(real_regret), np.std(real_regret))
-            print(real_regret)
-            print(1/0)
             sensitive_pulled = AverageResult(x, np.mean(sensitive_pulled), np.std(sensitive_pulled))
             if algorithm in average_regrets:
                 average_regrets[algorithm].append(regret)

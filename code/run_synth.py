@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     if args.exp == 'debug':
         arms = 10
-        Ts = [50]
+        Ts = [100]
         context_size = 2
         ratio = 5
         groups = {"g1": [i for i in range(0, ratio)], "g2": [i for i in range(ratio, arms)]}
@@ -39,7 +39,7 @@ if __name__ == "__main__":
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
                         group_std=error_std)
-        experiment.run_x_experiments(1, seeds=[1])
+        experiment.run_x_experiments(1, seeds=[102])
     if args.exp == 'T':
         arms = 10
         Ts = [n * 10 for n in range(2, 101, 2)]
