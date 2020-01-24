@@ -64,3 +64,62 @@ if __name__ == "__main__":
 						        filename=filename,sensitive_group=sensitive_group,
 						        context_matrix=context_matrix, reward_matrix=reward_matrix)
         experiment.run_x_experiments(runs)
+    elif args.exp == 'uci_student':
+        # Read in the data
+        data = pd.read_csv('../uci_student/student-por.csv', sep=';')
+        features = ['school', 'age', 'address', 'famsize', 'Pstatus', 'Medu', 'Fedu',
+                   'Mjob', 'Fjob', 'reason', 'guardian', 'traveltime', 'studytime',
+                   'failures', 'schoolsup', 'famsup', 'paid', 'activities', 'nursery',
+                   'higher', 'internet', 'romantic', 'famrel', 'freetime', 'goout', 'Dalc',
+                   'Walc', 'health', 'absences']
+        # Change categories to numbers
+        categorical_columns = ['school', 'address', 'famsize', 'Pstatus', 'Mjob',
+                       'Fjob', 'reason', 'guardian', 'schoolsup', 'famsup', 
+                       'paid', 'activities', 'nursery', 'higher', 'internet', 
+                       'romantic']
+        for cat in categorical_columns:
+            data[cat], _ = data[cat].factorize()
+        # Bucket age
+        data.age[data.age>18] = 19 # 19 is now >18 basically - just a hacky way to do this
+        groups = pd.unique(data["age"])
+        gender_groups = pd.unique(data["sex"])
+        gk = data.groupby(['age', 'sex'])
+
+        context_matrix = []
+        reward_matrix = []
+        group_names = []
+        idx = 0
+        groups = {'sensitive': [], 'not_sensitive': []}
+        sensitive_group = {}
+        for name, group in gk:
+            group_names.append(name)
+            if name[1] == "M":
+                groups['sensitive'].append(idx)
+                sensitive_group[idx] = True
+            else:
+                groups['not_sensitive'].append(idx)
+                sensitive_group[idx] = False
+            context_matrix.append(group[features].values)
+            reward_matrix.append(group['G3'].values)
+            idx += 1
+        arms = len(group_names)
+        context_size = len(features)
+
+        deltas = [.1, .2, .3, .4, .5]
+        # deltas = [.1]
+        runs = 100
+        Ts = [2 * n * arms for n in range(1, 21)]
+        # Ts = [2 * n * arms for n in range(20, 21)]
+
+        algorithms = ["TopInterval", "IntervalChaining", "Random", "GroupFairTopInterval"]
+        # algorithms = ["TopInterval"]
+        filename = "../experiments/%s/_context_%s" % (args.exp, context_size)
+        if not os.path.exists(os.path.dirname(filename)):
+            os.makedirs(os.path.dirname(filename))
+        experiment = Experiment(arms,context_size,groups,
+                                bandit_types=algorithms,deltas=deltas,
+                                Ts=Ts,arm_type="real",
+                                filename=filename,sensitive_group=sensitive_group,
+                                context_matrix=context_matrix, reward_matrix=reward_matrix)
+        experiment.run_x_experiments(runs)
+
