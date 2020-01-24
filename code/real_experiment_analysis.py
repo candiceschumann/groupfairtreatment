@@ -5,7 +5,13 @@ import argparse
 import collections
 import numpy as np
 import matplotlib
+matplotlib.use('TKAgg')
+matplotlib.rcParams['ps.useafm'] = True
+matplotlib.rcParams['pdf.use14corefonts'] = True
+# matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams.update({'font.size': 20})
 import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 import os
 import pandas as pd
 
@@ -26,16 +32,18 @@ def plot_things(averages, path, title, ylabel, xlabel='T'):
         for delta in deltas:
             fig, ax = plt.subplots()
             for algorithm in algorithms:
-                sub_name = algorithm
+                sub_name = algorithm + "_" + str(delta)
                 Ts = [x.name for x in averages[sub_name]]
                 means = np.array([x.mean for x in averages[sub_name]])
                 stds = np.array([x.std for x in averages[sub_name]])
-                ax.plot(Ts, means, label=algorithm)
+                ax.plot(Ts, means, label=algorithm,linewidth=3.0)
                 # ax.fill_between(Ts, means + stds, means - stds)
-
+            
             ax.set(xlabel=xlabel, ylabel=ylabel,
                    title=title)
-            ax.legend()
+            fontP = FontProperties()
+            fontP.set_size('x-small')
+            ax.legend(loc='upper left',prop=fontP)
             ax.grid()
             plt.tight_layout()
             fig.savefig(path + str(delta) + ".png")
@@ -126,7 +134,7 @@ if __name__ == "__main__":
                 averages[sub_name] = [average_sensitive_pulled]
         print(averages)
 
-        plot_things(averages, path, "Percentage of sensitive arms pulled", "Average # sensitive arms pulled")
+        plot_things(averages, path, "% of sensitive arms pulled", "% sensitive arms")
 
 
 

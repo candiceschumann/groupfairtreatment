@@ -5,6 +5,11 @@ import argparse
 import collections
 import numpy as np
 import matplotlib
+matplotlib.use('TKAgg')
+matplotlib.rcParams['ps.useafm'] = True
+matplotlib.rcParams['pdf.use14corefonts'] = True
+# matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams.update({'font.size': 20})
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
@@ -34,17 +39,17 @@ def plot_two_things(averages1, averages2, filename, title, ylabel, xlabel, a1_ty
         Ts = [x.name for x in averages1[algorithm]]
         means = np.array([x.mean for x in averages1[algorithm]])
         stds = np.array([x.std for x in averages1[algorithm]])
-        ax.plot(Ts, means, label=algorithm + " " + a1_type , color=colors[i])
+        ax.plot(Ts, means, label=algorithm + " " + a1_type , color=colors[i], linewidth=3.0)
     for i in range(len(algorithms)):
         algorithm = algorithms[i]
         Ts = [x.name for x in averages2[algorithm]]
         means = np.array([x.mean for x in averages2[algorithm]])
         stds = np.array([x.std for x in averages2[algorithm]])
-        ax.plot(Ts, means, label=algorithm + " " + a2_type , color=colors[i], linestyle='dashed')
+        ax.plot(Ts, means, label=algorithm + " " + a2_type , color=colors[i], linestyle='dashed', linewidth=3.0)
 
     ax.set(xlabel=xlabel, ylabel=ylabel,
            title=title)
-    ax.legend()
+    # ax.legend(facecolor="white", framealpha=1.0)
     ax.grid()
     plt.tight_layout()
     fig.savefig(filename)
@@ -61,12 +66,12 @@ def plot_things(averages, filename, title, ylabel, xlabel='T'):
         Ts = [x.name for x in averages[algorithm]]
         means = np.array([x.mean for x in averages[algorithm]])
         stds = np.array([x.std for x in averages[algorithm]])
-        ax.plot(Ts, means, label=algorithm)
+        ax.plot(Ts, means, label=algorithm, linewidth=3.0)
         # ax.fill_between(Ts, means + stds, means - stds)
 
     ax.set(xlabel=xlabel, ylabel=ylabel,
            title=title)
-    ax.legend()
+    # ax.legend(facecolor="white", framealpha=1.0)
     ax.grid()
     plt.tight_layout()
     fig.savefig(filename)
@@ -194,8 +199,8 @@ if __name__ == "__main__":
             x_label = 'Number of arms'
         elif args.type == 'ratio':
             x_label = 'Number of sensitive arms'
-        plot_two_things(average_regrets, average_real_regrets, os.path.join(path,'regret.png'), 'Regret', 'Regret', x_label, '', 'real')
-        plot_things(average_pull, os.path.join(path, 'pulls.png'), 'Sensitive arms pulled', 'Percent sensitive arms pulled', x_label)
+        plot_two_things(average_regrets, average_real_regrets, os.path.join(path,args.type + '_regret.png'), 'Regret', 'Regret', x_label, '', 'real')
+        plot_things(average_pull, os.path.join(path,args.type + '_pulls.png'), 'Sensitive arms pulled', 'Percent sensitive arms pulled', x_label)
     # if args.type == "T":
     #     with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'rb') as f:
     #         experiments = pickle.load(f)
