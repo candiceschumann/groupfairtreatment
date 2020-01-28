@@ -1,0 +1,34 @@
+{
+    "data": {
+        "filename": "../uci_student/student-por.csv",
+        "sep": ";"
+    },
+    "features": ["school", "age", "address", "famsize", "Pstatus", "Medu", "Fedu",
+                   "Mjob", "Fjob", "reason", "guardian", "traveltime", "studytime",
+                   "failures", "schoolsup", "famsup", "paid", "activities", "nursery",
+                   "higher", "internet", "romantic", "famrel", "freetime", "goout", "Dalc",
+                   "Walc", "health", "absences"],
+    "categorical_features": ["school", "address", "famsize", "Pstatus", "Mjob",
+                       "Fjob", "reason", "guardian", "schoolsup", "famsup", 
+                       "paid", "activities", "nursery", "higher", "internet", 
+                       "romantic"],
+    "reward_column": "G3",
+    "experiment_name": "uci_student/G3",
+    "sensitive_group": {
+        "column_name": "sex",
+        "binary": true,
+        "sensitive_name": "M"
+    },
+    "bucket": {
+        "column_name": "age",
+        "bucket_type": "ranges",
+        "ranges": [[15,16],[16,17],[17,18],[18,19],[19,30]]
+    },
+    "deltas": [0.1, 0.2, 0.3, 0.4, 0.5],
+    "runs": 100,
+    "Ts": {
+        "T_type": "range",
+        "range": [1,21]
+    },
+    "algorithms": ["TopInterval", "IntervalChaining", "Random", "GroupFairTopInterval"]
+}

@@ -61,7 +61,7 @@ if __name__ == "__main__":
     else:
         Ts = config["Ts"]["list"]
 
-    filename = "../experiments/%s/exp" % (config['experiment_name'])
+    filename = "../experiments/%s/exp.pkl" % (config['experiment_name'])
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     experiment = Experiment(arms,context_size,groups,
