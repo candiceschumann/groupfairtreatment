@@ -10,7 +10,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Get the config file
-    with open(args.config_file, 'rb') as f:
+    with open(args.config_file, 'r') as f:
         config = json.load(f)
 
     # Get the data
