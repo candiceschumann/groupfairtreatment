@@ -9,8 +9,9 @@ if __name__ == "__main__":
     parser.add_argument('run_name', help="Run name (like number)")
     args = parser.parse_args()
 
-    algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
+    algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
     runs = 10
+    mu=30
     seeds = [np.random.random_integers(100000000) for _ in range(runs)]
 
     if args.exp == 'debug':
@@ -38,7 +39,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
         experiment.run_x_experiments(1, seeds=[4])
     if args.exp == 'T':
         arms = 10
@@ -65,7 +66,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
         experiment.run_x_experiments(runs)
     if args.exp == "context_size":
         arms = 10
@@ -93,7 +94,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
             experiment.run_x_experiments(runs,seeds=seeds)
     if args.exp == "c":
         arms = 10
@@ -122,7 +123,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
             experiment.run_x_experiments(runs,seeds=seeds)
     if args.exp == "error":
         arms = 10
@@ -151,7 +152,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
             experiment.run_x_experiments(runs,seeds=seeds)
 
     if args.exp == "ratio":
@@ -182,7 +183,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
             experiment.run_x_experiments(runs,seeds=seeds)
     if args.exp == "delta":
         arms = 10
@@ -212,7 +213,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
             experiment.run_x_experiments(runs,seeds=seeds)
     if args.exp == "arms":
         num_arms = [i*10 for i in range(1,11)]
@@ -242,7 +243,7 @@ if __name__ == "__main__":
                         Ts=Ts,arm_type="uniform",
                         filename=filename,
                         cs=hardness,sensitive_group=sensitive_group,group_mean=error_mean, 
-                        group_std=error_std)
+                        group_std=error_std, mu=mu)
             experiment.run_x_experiments(runs,seeds=seeds)
 
 
