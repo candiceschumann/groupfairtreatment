@@ -30,5 +30,6 @@
         "T_type": "range",
         "range": [1,21]
     },
-    "algorithms": ["TopInterval", "IntervalChaining", "Random", "GroupFairTopInterval"]
+    "mu": 12,
+    "algorithms": ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
 }
