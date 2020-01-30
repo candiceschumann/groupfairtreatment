@@ -91,16 +91,21 @@ class GroupFairTopIntervalBandit(TopIntervalContextualBandit):
 			group = 1
 		else:
 			group = 0
-		sens_confidence = self.group_confidence(group, context)
-		# nonsens_confidence = self.group_confidence(not group, context)
+		sens_confidence = self.group_confidence(0, context)
+		nonsens_confidence = self.group_confidence(1, context)
 		# if group:
-		if math.isinf(w) or Y is None or self.group_beta[group] is None:
+		if math.isinf(w) or Y is None:
 			return float('inf')
+		if group == 0:
+			return Y+w
 		else:
-			# print (sens_confidence)
-			# print('w' + str(w))
-			return (Y + w - np.dot(self.group_beta[group].T, context) + sens_confidence + \
-			       np.dot(np.ones_like(self.group_beta[group]).T, context)*20)[0]
+			if self.group_beta[0] is None or self.group_beta[1] is None:
+				return float('inf')
+			Y_sens = np.dot(self.group_beta[0].T, context)
+			Y_nonsens = np.dot(self.group_beta[1].T, context)
+			return (Y+w - Y_sens + sens_confidence + Y_nonsens + nonsens_confidence)[0]
+			# return (Y + w - np.dot(self.group_beta[group].T, context) + sens_confidence + \
+			#        np.dot(np.ones_like(self.group_beta[group]).T, context)*20)[0]
 		# else:
 		# 	if math.isinf(w) or Y is None:
 		# 		return float('inf')
