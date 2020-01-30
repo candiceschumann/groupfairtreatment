@@ -68,5 +68,5 @@ if __name__ == "__main__":
                             bandit_types=config["algorithms"],deltas=config["deltas"],
                             Ts=Ts,arm_type="real",
                             filename=filename,sensitive_group=sensitive_group,
-                            context_matrix=context_matrix, reward_matrix=reward_matrix)
+                            context_matrix=context_matrix, reward_matrix=reward_matrix, mu=config["mu"])
     experiment.run_x_experiments(config["runs"])

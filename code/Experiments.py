@@ -7,6 +7,7 @@ from algorithms.GroupFairParityInterval import GroupFairParityIntervalBandit
 from algorithms.GroupFairProportional import GroupFairProportionalBandit
 from algorithms.GroupFairProportionalInterval import GroupFairProportionalIntervalBandit
 from algorithms.GroupFairTopInterval import GroupFairTopIntervalBandit
+from algorithms.MultiGroupFairTopInterval import MultiGroupFairTopIntervalBandit
 from ContextualArm import GeneralContextualArm
 from ErrorContextualArm import ErrorContextualArm
 from RealContextualArm import RealDataContextualArm
@@ -24,7 +25,7 @@ class Experiment:
         Ts=[100],arm_type="guassian",betas=None,
         filename="../experiments/experiments.pkl",
         cs=None,sensitive_group=None,group_mean=None, 
-        group_std=None, context_matrix=None, reward_matrix=None):
+        group_std=None, context_matrix=None, reward_matrix=None, mu=None):
         self.num_arms = num_arms
         self.context_size = context_size
         self.groups = groups
@@ -45,6 +46,7 @@ class Experiment:
         self.group_std = group_std
         self.context_matrix = context_matrix
         self.reward_matrix = reward_matrix
+        self.mu = mu
         self.create_bandits()
 
     def create_arms(self):
@@ -125,6 +127,12 @@ class Experiment:
                 self.bandits.append(GroupFairTopIntervalBandit(self.num_arms, 
                     self.context_size, experiment.delta, experiment.T, 
                     self.groups, self.arm_to_group, self.sensitive_group))
+            elif experiment.bandit == "MultiGroupFairTopInterval":
+                assert(self.sensitive_group is not None)
+                assert(self.mu is not None)
+                self.bandits.append(MultiGroupFairTopIntervalBandit(self.num_arms, 
+                    self.context_size, experiment.delta, experiment.T, 
+                    self.groups, self.arm_to_group, self.sensitive_group, self.mu))
             else:
                 raise ValueError("No Bandit type of " + experiment.bandit)
 
