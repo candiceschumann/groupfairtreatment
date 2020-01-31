@@ -1,0 +1,51 @@
+{
+    "data": {
+        "filename": "../family_income/family_income.csv",
+        "sep": ","
+    },
+    "features": ["Region", "Total Food Expenditure", "Main Source of Income", "Agricultural Household indicator",
+                 "Bread and Cereals Expenditure", "Total Rice Expenditure", "Meat Expenditure", 
+                 "Total Fish and  marine products Expenditure", "Fruit Expenditure", "Vegetables Expenditure", 
+                 "Restaurant and hotels Expenditure", "Alcoholic Beverages Expenditure", "Tobacco Expenditure", 
+                 "Clothing, Footwear and Other Wear Expenditure", "Housing and water Expenditure", 
+                 "Imputed House Rental Value", "Medical Care Expenditure", "Transportation Expenditure", 
+                 "Communication Expenditure", "Education Expenditure", "Miscellaneous Goods and Services Expenditure",
+                 "Special Occasions Expenditure", "Crop Farming and Gardening expenses", 
+                 "Total Income from Entrepreneurial Acitivites", "Household Head Marital Status", 
+                 "Household Head Highest Grade Completed", "Household Head Job or Business Indicator", 
+                 "Household Head Occupation", "Household Head Class of Worker", "Type of Household", 
+                 "Total Number of Family members", "Members with age less than 5 year old", 
+                 "Members with age 5 - 17 years old", "Total number of family members employed", 
+                 "Type of Building/House", "Type of Roof", "Type of Walls", "House Floor Area", "House Age", 
+                 "Number of bedrooms", "Tenure Status", "Toilet Facilities", "Electricity", "Main Source of Water Supply", 
+                 "Number of Television", "Number of CD/VCD/DVD", "Number of Component/Stereo set", 
+                 "Number of Refrigerator/Freezer", "Number of Washing Machine", "Number of Airconditioner", 
+                 "Number of Car, Jeep, Van", "Number of Landline/wireless telephones", "Number of Cellular phone", 
+                 "Number of Personal Computer", "Number of Stove with Oven/Gas Range", "Number of Motorized Banca", 
+                 "Number of Motorcycle/Tricycle"],
+    "categorical_features": ["Region", "Main Source of Income", "Household Head Marital Status", 
+                "Household Head Highest Grade Completed", "Household Head Job or Business Indicator", 
+                "Household Head Occupation", "Household Head Class of Worker", "Type of Household", 
+                "Type of Building/House", "Type of Roof", "Type of Walls", "Tenure Status", "Toilet Facilities", 
+                "Main Source of Water Supply"],
+    "reward_column": "Total Household Income",
+    "experiment_name": "family_income",
+    "sensitive_group": {
+        "column_name": "Household Head Sex",
+        "binary": true,
+        "sensitive_name": "Male"
+    },
+    "bucket": {
+        "column_name": "Household Head Age",
+        "bucket_type": "auto",
+        "num_buckets": 5
+    },
+    "deltas": [0.1, 0.2, 0.3, 0.4, 0.5],
+    "runs": 100,
+    "Ts": {
+        "T_type": "range",
+        "range": [1,21]
+    },
+    "mu": 247555,
+    "algorithms": ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
+}

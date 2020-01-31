@@ -28,7 +28,7 @@ if __name__ == "__main__":
         data[config["bucket"]["column_name"]] = data["temp_buckets"]
     elif config["bucket"]["bucket_type"] == "auto":
         buckets = pd.cut(data[config["bucket"]["column_name"]],config["bucket"]["num_buckets"]).astype(str)
-        data[config["bucket"]["column_name"]] = age_buckets
+        data[config["bucket"]["column_name"]] = buckets
 
     # Group data
     groups = pd.unique(data[config["bucket"]["column_name"]])

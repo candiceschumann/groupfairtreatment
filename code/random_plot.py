@@ -35,6 +35,7 @@ if __name__ == "__main__":
         #           data=data, palette="Set3", whis=5,showfliers=False)
         ax = sns.boxplot(x="Household Head Sex", y="Total Household Income",
                   data=data, palette="Set3", whis=5,showfliers=False)
+        print(data['Total Household Income'].mean())
         plt.show()
  #        # Change categories to numbers.
  #        features = []

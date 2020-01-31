@@ -19,15 +19,20 @@ if __name__ == "__main__":
         gender_groups = pd.unique(data["Household Head Sex"])
         # Change categories to numbers.
         features = []
+        categories = []
         for index, row in columns.iterrows():
             if row.Name == 'Total Household Income':
                 income = data[row.Name].values
             elif row.Name != "Household Head Age" and row.Name != "Household Head Sex":
                 if row.Type == "vals":
+                    print(row.Type)
+                    categories.append(row.Name)
                     data[row.Name] = data[row.Name].astype('category')
                     data[row.Name] = data[row.Name].cat.codes
                 features.append(row.Name)
-        print(features)
+        # print(features)
+        print(categories)
+        print(1/0)
         # Group by groups and gender
         gk = data.groupby(['Household Head Age', 'Household Head Sex'])
         context_matrix = []

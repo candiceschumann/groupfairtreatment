@@ -16,3 +16,4 @@
 *.pyc
 experiments/*
 maga*
+*.zip
