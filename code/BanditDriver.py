@@ -66,8 +66,8 @@ class BanditDriver:
 		print(" opt real reward sum " + str(opt_real_reward_sum/500))
 		print(" average real regret " + str(np.mean(np.array(self.opt_real_rewards) - np.array(self.real_rewards))))
 		print( "average regret " + str(np.mean(np.array(self.opt_rewards) - np.array(self.rewards))))
-		plt.plot(np.array(self.opt_real_rewards) - np.array(self.real_rewards))
-		plt.plot(np.array(self.opt_rewards) - np.array(self.rewards))
+		# plt.plot(np.array(self.opt_real_rewards) - np.array(self.real_rewards))
+		# plt.plot(np.array(self.opt_rewards) - np.array(self.rewards))
 		# plt.show()
 
 
