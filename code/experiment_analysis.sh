@@ -1,22 +1,26 @@
 #!/bin/bash
 
-# python3 experiment_analysis.py remap ../maga04/T
-python3 experiment_analysis.py T ../maga04/T
+for direct in ../maga_exp
+do
 
-# python3 experiment_analysis.py remap ../maga04/context_size
-python3 experiment_analysis.py context_size ../maga04/context_size
+    python3 experiment_analysis.py remap $direct/T
+    python3 experiment_analysis.py T $direct/T
 
-# python3 experiment_analysis.py remap ../maga04/c
-python3 experiment_analysis.py c ../maga04/c
+    python3 experiment_analysis.py remap $direct/context_size
+    python3 experiment_analysis.py context_size $direct/context_size
 
-# python3 experiment_analysis.py remap ../maga04/error
-python3 experiment_analysis.py error ../maga04/error
+    python3 experiment_analysis.py remap $direct/c
+    python3 experiment_analysis.py c $direct/c
 
-# python3 experiment_analysis.py remap ../maga04/delta
-python3 experiment_analysis.py delta ../maga04/delta
+    python3 experiment_analysis.py remap $direct/error
+    python3 experiment_analysis.py error $direct/error
 
-# python3 experiment_analysis.py remap ../maga04/ratio
-python3 experiment_analysis.py ratio ../maga04/ratio
+    python3 experiment_analysis.py remap $direct/delta
+    python3 experiment_analysis.py delta $direct/delta
 
-# python3 experiment_analysis.py remap ../maga04/arms
-python3 experiment_analysis.py arms ../maga04/arms
+    python3 experiment_analysis.py remap $direct/ratio
+    python3 experiment_analysis.py ratio $direct/ratio
+
+    python3 experiment_analysis.py remap $direct/arms
+    python3 experiment_analysis.py arms $direct/arms
+done
