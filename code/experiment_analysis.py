@@ -22,8 +22,8 @@ SingleResult = collections.namedtuple('SingleResult',
 BigExperiment = collections.namedtuple('BigExperiment', ['ratio', 'context_size', 'c', 'error_mean', 'bandit', 'delta', 'T', 'arms', 'sensitive_group'])
 AverageResult = collections.namedtuple('AverageResult', ['name', 'mean', 'std'])
 
-algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
-colors = ['blue','red','green']
+algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
+colors = ['blue','red','green', 'orange']
 
 
 def plot_two_things(averages1, averages2, filename, title, ylabel, xlabel, a1_type, a2_type):
@@ -53,6 +53,8 @@ def plot_two_things(averages1, averages2, filename, title, ylabel, xlabel, a1_ty
     ax.grid()
     plt.tight_layout()
     fig.savefig(filename)
+    ax.legend(facecolor="white", framealpha=1.0)
+    fig.savefig(filename+"test.png")
     # plt.show()
     plt.close()
 
@@ -75,6 +77,8 @@ def plot_things(averages, filename, title, ylabel, xlabel='T'):
     ax.grid()
     plt.tight_layout()
     fig.savefig(filename)
+    ax.legend(facecolor="white", framealpha=1.0)
+    fig.savefig(filename+"test.png")
     # plt.show()
     plt.close()
 

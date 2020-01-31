@@ -49,7 +49,7 @@ class MultiGroupFairTopIntervalBandit(GroupFairTopIntervalBandit):
             return float('inf')
         else:
             Y_group = np.dot(self.group_beta[group].T, context)
-            return (Y+w + self.mu - Y_group + group_confidence)[0]
+            return (Y+w + (self.mu - Y_group + group_confidence)*0.9)[0]
 
 
 

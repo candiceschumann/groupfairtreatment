@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
     runs = 10
-    mu=30
+    mu=58
     seeds = [np.random.random_integers(100000000) for _ in range(runs)]
 
     if args.exp == 'debug':

@@ -1,5 +1,5 @@
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 class BanditDriver:
 
@@ -20,20 +20,26 @@ class BanditDriver:
 			raise ValueError('Running for %d steps is more than the %d allowed') % (self.t + t, self.bandit.get_T())
 		reward_sum = 0
 		real_reward_sum = 0
+		opt_reward_sum = 0
+		opt_real_reward_sum = 0
 		for i in range(t):
 
 			self.t += 1
 			# Get new context for this round from all of the arms.
 			contexts = [self.arms[arm].get_new_context() for arm in range(len(self.arms))]
 			true_rewards = [self.arms[arm].get_reward(contexts[arm]) for arm in range(len(self.arms))]
-			print (true_rewards)
+			# print (true_rewards)
 			unbiased_rewards = [self.arms[arm].get_real_reward(contexts[arm]) for arm in range(len(self.arms))]
-			print (unbiased_rewards)
+			# print (unbiased_rewards)
 			self.opt_arms.append(np.argmax(true_rewards))
 			self.opt_real_arms.append(np.argmax(unbiased_rewards))
 			self.opt_rewards.append(true_rewards[self.opt_arms[-1]])
+			opt_reward_sum += self.opt_rewards[-1]
 			self.opt_real_rewards.append(unbiased_rewards[self.opt_real_arms[-1]])
+			opt_real_reward_sum += self.opt_real_rewards[-1]
 			print("round " + str(i))
+			print("opt_real_rewards " + str(self.opt_real_rewards[-1]))
+			print("opt reward " + str(self.opt_rewards[-1]))
 			# Pick an arm to pull and pull it
 			arm = self.bandit.pick_arm(contexts, self.t)
 			try:
@@ -56,6 +62,13 @@ class BanditDriver:
 			self.bandit.update(arm, contexts[arm], reward)
 		print("reward sum " + str(reward_sum/500))
 		print("real reward sum " + str(real_reward_sum/500))
+		print(" opt reward_sum " + str(opt_reward_sum/500))
+		print(" opt real reward sum " + str(opt_real_reward_sum/500))
+		print(" average real regret " + str(np.mean(np.array(self.opt_real_rewards) - np.array(self.real_rewards))))
+		print( "average regret " + str(np.mean(np.array(self.opt_rewards) - np.array(self.rewards))))
+		plt.plot(np.array(self.opt_real_rewards) - np.array(self.real_rewards))
+		plt.plot(np.array(self.opt_rewards) - np.array(self.rewards))
+		# plt.show()
 
 
 	def complete_run(self):

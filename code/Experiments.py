@@ -167,6 +167,13 @@ class Experiment:
             opt_real_rewards.append(driver.get_optimal_real_rewards())
             opt_real_arms.append(driver.get_optimal_real_arms())
 
+        num_sensitive = 0
+        # print(pulled_arms)
+        for arm in pulled_arms[-1]:
+            if self.sensitive_group[arm]:
+                num_sensitive += 1
+        print("sensitive pulled: " + str(num_sensitive/len(pulled_arms[-1])))
+
         return Results(seed,self.experiments,rewards,real_rewards,opt_rewards,opt_real_rewards,pulled_arms,opt_arms,opt_real_arms,regret)
 
     def run_x_experiments(self,x,save=True,seeds=None):
