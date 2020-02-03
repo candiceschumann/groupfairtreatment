@@ -4,6 +4,7 @@ import pickle
 import argparse
 import collections
 import numpy as np
+# import seaborn as sns;
 import matplotlib
 matplotlib.use('TKAgg')
 matplotlib.rcParams['ps.useafm'] = True
@@ -22,7 +23,7 @@ SingleResult = collections.namedtuple('SingleResult',
 BigExperiment = collections.namedtuple('BigExperiment', ['ratio', 'context_size', 'c', 'error_mean', 'bandit', 'delta', 'T', 'arms', 'sensitive_group'])
 AverageResult = collections.namedtuple('AverageResult', ['name', 'mean', 'std'])
 
-algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
+algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
 colors = ['blue','red','green', 'orange']
 
 
@@ -39,13 +40,18 @@ def plot_two_things(averages1, averages2, filename, title, ylabel, xlabel, a1_ty
         Ts = [x.name for x in averages1[algorithm]]
         means = np.array([x.mean for x in averages1[algorithm]])
         stds = np.array([x.std for x in averages1[algorithm]])
+        # sns.lineplot÷(x=Ts, y=means, data=fmri)
         ax.plot(Ts, means, label=algorithm + " " + a1_type , color=colors[i], linewidth=3.0)
+        # ax.fill_between(Ts, means-stds, means+stds, alpha=0.3, facecolor=colors[i])
     for i in range(len(algorithms)):
         algorithm = algorithms[i]
         Ts = [x.name for x in averages2[algorithm]]
         means = np.array([x.mean for x in averages2[algorithm]])
         stds = np.array([x.std for x in averages2[algorithm]])
         ax.plot(Ts, means, label=algorithm + " " + a2_type , color=colors[i], linestyle='dashed', linewidth=3.0)
+        # print(means-stds)
+        # print(means+stds)
+        ax.fill_between(Ts, means-stds, means+stds, alpha=0.3, facecolor=colors[i])
 
     ax.set(xlabel=xlabel, ylabel=ylabel,
            title=title)
@@ -69,6 +75,7 @@ def plot_things(averages, filename, title, ylabel, xlabel='T'):
         means = np.array([x.mean for x in averages[algorithm]])
         stds = np.array([x.std for x in averages[algorithm]])
         ax.plot(Ts, means, label=algorithm, linewidth=3.0)
+        ax.fill_between(Ts, means-stds, means+stds, alpha=0.3)
         # ax.fill_between(Ts, means + stds, means - stds)
 
     ax.set(xlabel=xlabel, ylabel=ylabel,
