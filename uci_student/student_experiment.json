@@ -17,7 +17,7 @@
     "sensitive_group": {
         "column_name": "sex",
         "binary": true,
-        "sensitive_name": "M"
+        "sensitive_name": "F"
     },
     "bucket": {
         "column_name": "age",
@@ -31,5 +31,5 @@
         "range": [1,21]
     },
     "mu": 12,
-    "algorithms": ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
+    "algorithms": ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
 }

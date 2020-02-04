@@ -35,6 +35,7 @@ def plot_things(averages, path, title, ylabel, xlabel='T', config=None):
             means = np.array([x.mean for x in averages[sub_name]])
             stds = np.array([x.std for x in averages[sub_name]])
             ax.plot(Ts, means, label=algorithm,linewidth=3.0)
+            ax.fill_between(Ts, means-stds, means+stds, alpha=0.3)
             # ax.fill_between(Ts, means + stds, means - stds)
         
         ax.set(xlabel=xlabel, ylabel=ylabel,
