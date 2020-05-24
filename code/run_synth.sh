@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for run_number in 3 4 5 6 7 8
+for run_number in 1 2 3 4 5 6 7 8
 do
     for experiment_type in T context_size c error ratio delta arms
     do
