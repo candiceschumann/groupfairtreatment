@@ -47,5 +47,5 @@
         "range": [1,21]
     },
     "mu": 247555,
-    "algorithms": ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
+    "algorithms": ["GroupFairProportional"]
 }
