@@ -9,7 +9,7 @@ if __name__ == "__main__":
     parser.add_argument('run_name', help="Run name (like number)")
     args = parser.parse_args()
 
-    algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "MultiGroupFairTopInterval"]
+    algorithms = ["GroupFairProportional"]
     runs = 10
     mu=58
     seeds = [np.random.random_integers(100000000) for _ in range(runs)]
