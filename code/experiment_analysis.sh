@@ -1,26 +1,30 @@
 #!/bin/bash
 
-for direct in ../maga_exp
-do
 
-    # python3 experiment_analysis.py remap $direct/T
-    python3 experiment_analysis.py T $direct/T
+echo "T"
+python3 experiment_analysis.py remap ../maga_exp_naive/T --in_dirs ../maga_exp_naive/T ../maga_exp/T
+python3 experiment_analysis.py T ../maga_exp_naive/T
 
-    # python3 experiment_analysis.py remap $direct/context_size
-    python3 experiment_analysis.py context_size $direct/context_size
+# echo "context_size"
+# python3 experiment_analysis.py remap ../maga_exp_naive/context_size --in_dirs ../maga_exp_naive/context_size ../maga_exp/context_size
+# python3 experiment_analysis.py context_size ../maga_exp_naive/context_size
 
-    # python3 experiment_analysis.py remap $direct/c
-    python3 experiment_analysis.py c $direct/c
+# echo "c"
+# python3 experiment_analysis.py remap ../maga_exp_naive/c --in_dirs ../maga_exp_naive/c ../maga_exp/c
+# python3 experiment_analysis.py c ../maga_exp_naive/c
 
-    # python3 experiment_analysis.py remap $direct/error
-    python3 experiment_analysis.py error $direct/error
+# echo "error"
+# python3 experiment_analysis.py remap ../maga_exp_naive/error --in_dirs ../maga_exp_naive/error ../maga_exp/error
+# python3 experiment_analysis.py error ../maga_exp_naive/error
 
-    # python3 experiment_analysis.py remap $direct/delta
-    python3 experiment_analysis.py delta $direct/delta
+# echo "delta"
+# python3 experiment_analysis.py remap ../maga_exp_naive/delta --in_dirs ../maga_exp_naive/delta ../maga_exp/delta
+# python3 experiment_analysis.py delta ../maga_exp_naive/delta
 
-    # python3 experiment_analysis.py remap $direct/ratio
-    python3 experiment_analysis.py ratio $direct/ratio
+# echo "ratio"
+# python3 experiment_analysis.py remap ../maga_exp_naive/ratio --in_dirs ../maga_exp_naive/ratio ../maga_exp/ratio
+# python3 experiment_analysis.py ratio ../maga_exp_naive/ratio
 
-    # python3 experiment_analysis.py remap $direct/arms
-    python3 experiment_analysis.py arms $direct/arms
-done
+# echo "arms"
+# python3 experiment_analysis.py remap ../maga_exp_naive/arms --in_dirs ../maga_exp_naive/arms ../maga_exp/arms
+# python3 experiment_analysis.py arms ../maga_exp_naive/arms

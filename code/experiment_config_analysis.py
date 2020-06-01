@@ -31,6 +31,8 @@ def plot_things(averages, path, title, ylabel, xlabel='T', config=None):
         fig, ax = plt.subplots()
         for algorithm in config['algorithms']:
             sub_name = algorithm + "_" + str(delta)
+            if algorithm == "GroupFairProportional":
+                algorithm = "NaiveFair"
             Ts = [x.name for x in averages[sub_name]]
             means = np.array([x.mean for x in averages[sub_name]])
             stds = np.array([x.std for x in averages[sub_name]])
@@ -94,7 +96,7 @@ def arms_pulled(experiments, sensitive_group, output_dir, config):
     plot_things(averages, path, "% of sensitive arms pulled", "% sensitive arms", config=config)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Runs Group Fair MAB experiments')
+    parser = argparse.ArgumentParser(description='Runs Group Fair MAB experiment analysis')
     parser.add_argument('type', help="type")
     parser.add_argument('output_dir', help='dir')
     parser.add_argument('config_file', help='config')
@@ -114,26 +116,30 @@ if __name__ == "__main__":
         remapped_experiments = {}
         for in_dir in args.in_dirs:
             for in_file in os.listdir(in_dir):
-                filename = os.path.join(in_dir,in_file)
-                with open(filename, 'rb') as f:
-                    experiment = pickle.load(f)
-                print(experiment['sensitive_group'])
-                with open(args.output_dir + "groups.pkl", 'wb') as f:
-                    pickle.dump(experiment['sensitive_group'],f)
-                    groups = experiment['sensitive_group']
-                for experiment_result in experiment['experiment_results']:
-                    for i in range(len(experiment_result.experiments)):
-                        name = (experiment_result.experiments[i].bandit + "_" +
-                            str(experiment_result.experiments[i].delta) + "_" +
-                            str(experiment_result.experiments[i].T))
-                        single_result = SingleResult(name, experiment_result.experiments[i], 
-                            experiment_result.rewards[i], experiment_result.opt_real_rewards[i], 
-                            experiment_result.pulled_arms[i], experiment_result.opt_real_arms[i], 
-                            experiment_result.regret[i])
-                        if name in remapped_experiments:
-                            remapped_experiments[name].append(single_result)
-                        else:
-                            remapped_experiments[name] = [single_result]
+                if (in_file != "remapped_experiments.pkl" and in_file != "groups.pkl") and in_file[-4:] == ".pkl":
+                    filename = os.path.join(in_dir,in_file)
+                    print(filename) 
+                    with open(filename, 'rb') as f:
+                        experiment = pickle.load(f)
+                    print(experiment['sensitive_group'])
+                    with open(args.output_dir + "groups.pkl", 'wb') as f:
+                        pickle.dump(experiment['sensitive_group'],f)
+                        groups = experiment['sensitive_group']
+                    for experiment_result in experiment['experiment_results']:
+                        for i in range(len(experiment_result.experiments)):
+                            name = (experiment_result.experiments[i].bandit + "_" +
+                                str(experiment_result.experiments[i].delta) + "_" +
+                                str(experiment_result.experiments[i].T))
+                            single_result = SingleResult(name, experiment_result.experiments[i], 
+                                experiment_result.rewards[i], experiment_result.opt_real_rewards[i], 
+                                experiment_result.pulled_arms[i], experiment_result.opt_real_arms[i], 
+                                experiment_result.regret[i])
+                            if name in remapped_experiments:
+                                remapped_experiments[name].append(single_result)
+                            else:
+                                remapped_experiments[name] = [single_result]
+                else:
+                    print("skipping: " + in_file)
         bytes_out = pickle.dumps(remapped_experiments)
         with open(args.output_dir + "remapped_experiments.pkl",'wb') as f:
             for idx in range(0, len(bytes_out), max_bytes):

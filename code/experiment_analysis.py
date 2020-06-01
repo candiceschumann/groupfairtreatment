@@ -37,6 +37,8 @@ def plot_two_things(averages1, averages2, filename, title, ylabel, xlabel, a1_ty
     fig, ax = plt.subplots()
     for i in range(len(algorithms)):
         algorithm = algorithms[i]
+        print('PRINTING')
+        print(averages1.keys())
         Ts = [x.name for x in averages1[algorithm]]
         means = np.array([x.mean for x in averages1[algorithm]])
         stds = np.array([x.std for x in averages1[algorithm]])
@@ -93,64 +95,69 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Runs Group Fair MAB experiments')
     parser.add_argument('type', help="type")
     parser.add_argument('dir', help='dir')
+    parser.add_argument('--in_dirs', nargs='*')
     args = parser.parse_args()
 
     if args.type == "remap":
-        files = [f for f in os.listdir(args.dir) if os.path.isfile(os.path.join(args.dir, f))]
         remapped_experiments = {}
-        for filename in files:
-            # Get information from the filename
-            print(filename)
-            try:
-                i1 = filename.index('_ratio_')
-            except:
-                continue
-            context_size = int(filename[len('context_'):i1])
-            i2 = filename.index('_c_')
-            ratio = int(filename[i1 + len('_ratio_'):i2])
-            i1 = i2
-            i2 = filename.index('_delta_')
-            c = int(filename[i1 + len('_c_'):i2])
-            i1 = i2
-            i2 = filename.index('_error_')
-            delta = float(filename[i1+len('_delta_'):i2])
-            i1 = i2
-            i2 = filename.index('_arms_')
-            error_mean = int(filename[i1+len('_error_'):i2])
-            i1 = i2
-            i2 = filename.index('_run_')
-            arms = int(filename[i1+len('_arms_'):i2])
-            
-            #Open file
-            with open(os.path.join(args.dir, filename), 'rb') as f:
-                results = pickle.load(f)
+        for in_dir in args.in_dirs:
+            files = [f for f in os.listdir(in_dir) if os.path.isfile(os.path.join(in_dir, f))]
+            for filename in files:
+                # Get information from the filename
+                print(os.path.join(in_dir, filename))
+                try:
+                    i1 = filename.index('_ratio_')
+                except:
+                    continue
+                context_size = int(filename[len('context_'):i1])
+                i2 = filename.index('_c_')
+                ratio = int(filename[i1 + len('_ratio_'):i2])
+                i1 = i2
+                i2 = filename.index('_delta_')
+                c = int(filename[i1 + len('_c_'):i2])
+                i1 = i2
+                i2 = filename.index('_error_')
+                delta = float(filename[i1+len('_delta_'):i2])
+                i1 = i2
+                i2 = filename.index('_arms_')
+                error_mean = int(filename[i1+len('_error_'):i2])
+                i1 = i2
+                i2 = filename.index('_run_')
+                arms = int(filename[i1+len('_arms_'):i2])
+                
+                #Open file
+                with open(os.path.join(in_dir, filename), 'rb') as f:
+                    results = pickle.load(f)
 
-            sensitive_group = results['sensitive_group']
-            # print(sensitive_group)
-            # Rewrite experiments
-            for experiment in results['experiment_results']:
-                for i in range(len(experiment.experiments)):
-                    big_experiment = BigExperiment(ratio, context_size, c, error_mean, 
-                        experiment.experiments[i].bandit, experiment.experiments[i].delta, 
-                        experiment.experiments[i].T, arms, sensitive_group)
-                    name = "_".join([str(x) for x in [ratio, context_size, c, error_mean, 
-                        experiment.experiments[i].bandit, experiment.experiments[i].delta, 
-                        experiment.experiments[i].T]])
-                    result = SingleResult(name, big_experiment, experiment.rewards[i],
-                        experiment.real_rewards[i], 
-                        experiment.opt_rewards[i], experiment.opt_real_rewards[i],
-                        experiment.pulled_arms[i], experiment.opt_arms[i], 
-                        experiment.opt_real_arms[i], experiment.regret[i])
-                    if name in remapped_experiments:
-                        remapped_experiments[name].append(result)
-                    else:
-                        remapped_experiments[name] = [result]
+                sensitive_group = results['sensitive_group']
+                # print(sensitive_group)
+                # Rewrite experiments
+                for experiment in results['experiment_results']:
+                    for i in range(len(experiment.experiments)):
+                        big_experiment = BigExperiment(ratio, context_size, c, error_mean, 
+                            experiment.experiments[i].bandit, experiment.experiments[i].delta, 
+                            experiment.experiments[i].T, arms, sensitive_group)
+                        name = "_".join([str(x) for x in [ratio, context_size, c, error_mean, 
+                            experiment.experiments[i].bandit, experiment.experiments[i].delta, 
+                            experiment.experiments[i].T]])
+                        result = SingleResult(name, big_experiment, experiment.rewards[i],
+                            experiment.real_rewards[i], 
+                            experiment.opt_rewards[i], experiment.opt_real_rewards[i],
+                            experiment.pulled_arms[i], experiment.opt_arms[i], 
+                            experiment.opt_real_arms[i], experiment.regret[i])
+                        if name in remapped_experiments:
+                            remapped_experiments[name].append(result)
+                        else:
+                            remapped_experiments[name] = [result]
 
         with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'wb') as f:
             pickle.dump(remapped_experiments, f)
     else:
         with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'rb') as f:
             experiments = pickle.load(f)
+
+        print(experiments.keys())
+        print(1/0)
         average_real_regrets = {}
         average_regrets = {}
         average_pull = {}
