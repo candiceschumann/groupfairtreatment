@@ -10,7 +10,7 @@ matplotlib.use('TKAgg')
 matplotlib.rcParams['ps.useafm'] = True
 matplotlib.rcParams['pdf.use14corefonts'] = True
 # matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams.update({'font.size': 20})
+matplotlib.rcParams.update({'font.size': 25})
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
@@ -23,8 +23,8 @@ SingleResult = collections.namedtuple('SingleResult',
 BigExperiment = collections.namedtuple('BigExperiment', ['ratio', 'context_size', 'c', 'error_mean', 'bandit', 'delta', 'T', 'arms', 'sensitive_group'])
 AverageResult = collections.namedtuple('AverageResult', ['name', 'mean', 'std'])
 
-algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval"]
-colors = ['blue','red','green', 'orange']
+algorithms = ["TopInterval", "IntervalChaining", "GroupFairTopInterval", "GroupFairProportional"]
+colors = ['blue','orange','green', 'red']
 
 
 def plot_two_things(averages1, averages2, filename, title, ylabel, xlabel, a1_type, a2_type):
@@ -37,20 +37,24 @@ def plot_two_things(averages1, averages2, filename, title, ylabel, xlabel, a1_ty
     fig, ax = plt.subplots()
     for i in range(len(algorithms)):
         algorithm = algorithms[i]
-        print('PRINTING')
-        print(averages1.keys())
+        # print('PRINTING')
+        # print(averages1.keys())
         Ts = [x.name for x in averages1[algorithm]]
         means = np.array([x.mean for x in averages1[algorithm]])
         stds = np.array([x.std for x in averages1[algorithm]])
         # sns.lineplot÷(x=Ts, y=means, data=fmri)
-        ax.plot(Ts, means, label=algorithm + " " + a1_type , color=colors[i], linewidth=3.0)
+        if algorithm == "GroupFairProportional":
+            algorithm = "NaiveFair"
+        ax.plot(Ts, means, label=algorithm + " " + a1_type , color=colors[i], linewidth=4.0)
         # ax.fill_between(Ts, means-stds, means+stds, alpha=0.3, facecolor=colors[i])
     for i in range(len(algorithms)):
         algorithm = algorithms[i]
         Ts = [x.name for x in averages2[algorithm]]
         means = np.array([x.mean for x in averages2[algorithm]])
         stds = np.array([x.std for x in averages2[algorithm]])
-        ax.plot(Ts, means, label=algorithm + " " + a2_type , color=colors[i], linestyle='dashed', linewidth=3.0)
+        if algorithm == "GroupFairProportional":
+            algorithm = "NaiveFair"
+        ax.plot(Ts, means, label=algorithm + " " + a2_type , color=colors[i], linestyle='dashed', linewidth=4.0)
         # print(means-stds)
         # print(means+stds)
         ax.fill_between(Ts, means-stds, means+stds, alpha=0.3, facecolor=colors[i])
@@ -76,7 +80,9 @@ def plot_things(averages, filename, title, ylabel, xlabel='T'):
         Ts = [x.name for x in averages[algorithm]]
         means = np.array([x.mean for x in averages[algorithm]])
         stds = np.array([x.std for x in averages[algorithm]])
-        ax.plot(Ts, means, label=algorithm, linewidth=3.0)
+        if algorithm == "GroupFairProportional":
+            algorithm = "NaiveFair"
+        ax.plot(Ts, means, label=algorithm, linewidth=4.0)
         ax.fill_between(Ts, means-stds, means+stds, alpha=0.3)
         # ax.fill_between(Ts, means + stds, means - stds)
 
@@ -152,12 +158,13 @@ if __name__ == "__main__":
 
         with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'wb') as f:
             pickle.dump(remapped_experiments, f)
+        print("saved")
     else:
         with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'rb') as f:
             experiments = pickle.load(f)
 
-        print(experiments.keys())
-        print(1/0)
+        # print(experiments.keys())
+        # print(1/0)
         average_real_regrets = {}
         average_regrets = {}
         average_pull = {}
@@ -218,7 +225,7 @@ if __name__ == "__main__":
         elif args.type == 'ratio':
             x_label = 'Number of sensitive arms'
         plot_two_things(average_regrets, average_real_regrets, os.path.join(path,args.type + '_regret.png'), 'Regret', 'Regret', x_label, '', 'real')
-        plot_things(average_pull, os.path.join(path,args.type + '_pulls.png'), 'Sensitive arms pulled', 'Percent sensitive arms pulled', x_label)
+        plot_things(average_pull, os.path.join(path,args.type + '_pulls.png'), 'Sensitive arms pulled', '% sensitive arms pulled', x_label)
     # if args.type == "T":
     #     with open(os.path.join(args.dir, 'remapped_experiments.pkl'), 'rb') as f:
     #         experiments = pickle.load(f)
