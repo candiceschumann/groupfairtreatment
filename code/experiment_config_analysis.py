@@ -9,7 +9,7 @@ matplotlib.use('TKAgg')
 matplotlib.rcParams['ps.useafm'] = True
 matplotlib.rcParams['pdf.use14corefonts'] = True
 # matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams.update({'font.size': 20})
+matplotlib.rcParams.update({'font.size': 22})
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import os
@@ -31,11 +31,11 @@ def plot_things(averages, path, title, ylabel, xlabel='T', config=None):
         fig, ax = plt.subplots()
         for algorithm in config['algorithms']:
             sub_name = algorithm + "_" + str(delta)
-            if algorithm == "GroupFairProportional":
-                algorithm = "NaiveFair"
             Ts = [x.name for x in averages[sub_name]]
             means = np.array([x.mean for x in averages[sub_name]])
             stds = np.array([x.std for x in averages[sub_name]])
+            if algorithm == "GroupFairProportional":
+                algorithm = "NaiveFair"
             ax.plot(Ts, means, label=algorithm,linewidth=3.0)
             ax.fill_between(Ts, means-stds, means+stds, alpha=0.3)
             # ax.fill_between(Ts, means + stds, means - stds)
